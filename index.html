@@ -124,6 +124,58 @@ tfoot tr td{background:#f7f8fa;font-weight:700;border-top:2px solid var(--border
   .header-right{gap:5px}
   .main{padding:14px}
 }
+
+.app-tab{background:none;border:none;padding:12px 24px;font-family:var(--font-display);font-size:15px;font-weight:700;letter-spacing:1px;cursor:pointer;color:var(--muted);border-bottom:3px solid transparent;transition:all .2s;text-transform:uppercase}
+.app-tab.active{color:var(--accent);border-bottom-color:var(--accent);background:#fff8f7}
+.app-tab:hover:not(.active){color:var(--primary)}
+.app-page{display:none}.app-page.active{display:block}
+
+/* RECORRIDOS */
+.rec-calendar{display:grid;grid-template-columns:repeat(7,1fr);gap:10px;margin-bottom:20px}
+.rec-day-card{background:#fff;border:1.5px solid var(--border);border-radius:10px;overflow:hidden;min-height:200px}
+.rec-day-header{background:var(--primary);color:#fff;padding:8px 12px;font-family:var(--font-display);font-size:14px;font-weight:700;letter-spacing:1px;display:flex;justify-content:space-between;align-items:center}
+.rec-day-header.domingo{background:var(--accent)}
+.rec-day-header.sabado{background:#7c3aed}
+.rec-day-header.viernes{background:#1d4ed8}
+.rec-chofer-block{border-bottom:1px solid var(--border)}
+.rec-chofer-name{background:#f0f2f5;padding:5px 10px;font-size:11px;font-weight:700;letter-spacing:.8px;text-transform:uppercase;color:var(--primary);display:flex;justify-content:space-between;align-items:center}
+.rec-chofer-name .hrs{color:var(--accent);font-family:var(--font-mono)}
+.rec-turno{display:flex;align-items:center;gap:6px;padding:4px 10px;border-bottom:1px solid #f5f5f5;font-size:12px}
+.rec-turno:last-child{border-bottom:none}
+.rec-hora{font-family:var(--font-mono);font-size:11px;font-weight:600;color:var(--muted);white-space:nowrap}
+.rec-detalle{flex:1;color:var(--primary);font-size:12px}
+.rec-add-btn{width:100%;padding:5px;background:#f9fafb;border:none;cursor:pointer;font-size:11px;color:var(--muted);transition:background .15s;border-top:1px dashed var(--border)}
+.rec-add-btn:hover{background:#fef3f2;color:var(--accent)}
+.rec-del-btn{background:none;border:none;cursor:pointer;color:#e5e7eb;font-size:12px;padding:1px 4px;border-radius:3px}
+.rec-del-btn:hover{color:var(--accent);background:#fee2e2}
+
+/* month nav */
+.month-nav{display:flex;align-items:center;gap:12px;margin-bottom:16px}
+.month-title{font-family:var(--font-display);font-size:22px;font-weight:800;letter-spacing:2px}
+.dow-headers{display:grid;grid-template-columns:repeat(7,1fr);gap:10px;margin-bottom:6px}
+.dow-hdr{text-align:center;font-family:var(--font-display);font-size:12px;font-weight:700;letter-spacing:1px;color:var(--muted);text-transform:uppercase;padding:4px}
+.dow-hdr.dom{color:var(--accent)}.dow-hdr.sab{color:#7c3aed}.dow-hdr.vie{color:var(--blue)}
+.rec-day-empty{background:#f9fafb;border:1.5px solid #edf0f4;border-radius:10px;min-height:80px}
+
+/* LIQUIDACION */
+.liq-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:14px;margin-bottom:20px}
+.liq-card{background:#fff;border:1.5px solid var(--border);border-radius:12px;overflow:hidden}
+.liq-card-header{background:var(--primary);color:#fff;padding:12px 16px;display:flex;justify-content:space-between;align-items:center}
+.liq-chofer-name{font-family:var(--font-display);font-size:18px;font-weight:700;letter-spacing:1px}
+.liq-card-body{padding:14px 16px}
+.liq-row{display:flex;justify-content:space-between;align-items:center;padding:5px 0;border-bottom:1px solid #f0f2f5;font-size:13px}
+.liq-row:last-child{border-bottom:none}
+.liq-label{color:var(--muted)}
+.liq-val{font-family:var(--font-mono);font-weight:600}
+.liq-total-row{background:#f7f8fa;padding:12px 16px;display:flex;justify-content:space-between;align-items:center;border-top:2px solid var(--border)}
+.liq-total-label{font-family:var(--font-display);font-size:14px;font-weight:700;letter-spacing:1px}
+.liq-total-val{font-family:var(--font-mono);font-size:20px;font-weight:700;color:var(--green)}
+
+.chofer-mgr{background:#fff;border:1.5px solid var(--border);border-radius:10px;padding:14px 18px;margin-bottom:16px}
+.chofer-tag{display:inline-flex;align-items:center;gap:6px;background:#f0f2f5;border:1px solid var(--border);border-radius:20px;padding:4px 12px;font-size:13px;font-weight:600;margin:4px}
+.chofer-tag .remove{cursor:pointer;color:var(--muted);font-size:14px}
+.chofer-tag .remove:hover{color:var(--accent)}
+
 </style>
 </head>
 <body>
@@ -151,6 +203,14 @@ tfoot tr td{background:#f7f8fa;font-weight:700;border-top:2px solid var(--border
   <span style="margin-left:auto;color:#6b7280;font-size:12px" id="pDates"></span>
 </div>
 
+
+<div style="background:#fff;border-bottom:2px solid var(--border);display:flex;gap:0">
+  <button class="app-tab active" id="tab-viajes" onclick="switchAppTab('viajes')">🚌 Planilla de Viajes</button>
+  <button class="app-tab" id="tab-recorridos" onclick="switchAppTab('recorridos')">📅 Recorridos COFCO</button>
+  <button class="app-tab" id="tab-liquidacion" onclick="switchAppTab('liquidacion')">💰 Liquidación</button>
+</div>
+
+<div id="app-viajes" class="app-page active">
 <div class="main">
 
   <div class="stats-bar">
@@ -219,6 +279,14 @@ tfoot tr td{background:#f7f8fa;font-weight:700;border-top:2px solid var(--border
     <button class="add-row" onclick="addRow()">+ Agregar nuevo registro</button>
   </div>
 </div>
+
+</div><!-- end app-viajes -->
+
+<!-- RECORRIDOS PAGE -->
+<div id="app-recorridos" class="app-page" style="padding:20px 24px"></div>
+
+<!-- LIQUIDACION PAGE -->
+<div id="app-liquidacion" class="app-page" style="padding:20px 24px"></div>
 
 <!-- MODAL PERÍODOS -->
 <div class="modal-ov" id="periodsModal">
@@ -590,6 +658,552 @@ document.querySelectorAll('.modal-ov,.confirm-ov').forEach(el=>
 
   save();
   renderAll();
-})();</script>
+})();
+// ============================================================
+// RECORRIDOS SYSTEM
+// ============================================================
+const SK_R = 'cnt_recorridos_v1';
+let recState = loadRecState();
+
+function loadRecState(){
+  try{ const s=JSON.parse(localStorage.getItem(SK_R)); if(s&&s.choferes) return s; }catch(e){}
+  return initRecState();
+}
+
+function initRecState(){
+  const now = new Date();
+  return {
+    choferes: ['GONZALEZ ALICIO','REINA SEBASTIAN','BARRERA FERNANDO','BOLADO JOSE'],
+    valorHora: 5805.20,
+    viewYear: now.getFullYear(),
+    viewMonth: now.getMonth(),
+    // days: { 'YYYY-MM-DD': { choferes: { 'NOMBRE': [ {desde,hasta,detalle} ] } } }
+    days: {},
+    // templates: { 'lunes'|'martes'|...|'sabado'|'domingo': { choferes: {...} } }
+    templates: initTemplates()
+  };
+}
+
+function initTemplates(){
+  return {
+    'lunes':   lunesJuevesTemplate(),
+    'martes':  lunesJuevesTemplate(),
+    'miercoles': lunesJuevesTemplate(),
+    'jueves':  juevesTemplate(),
+    'viernes': viernesTemplate(),
+    'sabado':  sabadoTemplate(),
+    'domingo': domingoTemplate()
+  };
+}
+
+function lunesJuevesTemplate(){
+  return { choferes:{
+    'GONZALEZ ALICIO':[
+      {desde:'4:00',hasta:'7:00',detalle:'Recorrido'},
+      {desde:'7:00',hasta:'8:00',detalle:'Recorrido Interno'},
+      {desde:'15:30',hasta:'17:00',detalle:'Retiro Interno'},
+      {desde:'20:00',hasta:'23:00',detalle:'Recorrido'}
+    ],
+    'REINA SEBASTIAN':[
+      {desde:'1:30',hasta:'2:30',detalle:'Retira Roche Marcelo (02:00 hs)'},
+      {desde:'6:30',hasta:'8:00',detalle:'Recorrido Externo'},
+      {desde:'12:00',hasta:'15:00',detalle:'Recorrido'},
+      {desde:'15:30',hasta:'17:00',detalle:'Retiro Externo'},
+      {desde:'21:00',hasta:'22:30',detalle:'Ing. Jaime - Ret. Acosta'}
+    ],
+    'BOLADO JOSE':[
+      {desde:'5:00',hasta:'6:00',detalle:'Ing. Mangini'},
+      {desde:'7:00',hasta:'8:00',detalle:'Ing. Figgini'},
+      {desde:'13:00',hasta:'14:30',detalle:'Ing. Acosta - Ret. Mangini'},
+      {desde:'16:30',hasta:'17:30',detalle:'Ret. Figgini'}
+    ]
+  }};
+}
+
+function juevesTemplate(){
+  return { choferes:{
+    'GONZALEZ ALICIO':[
+      {desde:'4:00',hasta:'7:00',detalle:'Recorrido'},
+      {desde:'7:00',hasta:'8:00',detalle:'Recorrido Interno'},
+      {desde:'15:30',hasta:'17:00',detalle:'Retiro Interno'},
+      {desde:'20:00',hasta:'23:00',detalle:'Recorrido'}
+    ],
+    'REINA SEBASTIAN':[
+      {desde:'1:30',hasta:'2:30',detalle:'Retira Roche Marcelo (02:00 hs)'},
+      {desde:'6:30',hasta:'8:00',detalle:'Recorrido Externo'},
+      {desde:'12:00',hasta:'15:00',detalle:'Recorrido'},
+      {desde:'15:30',hasta:'17:00',detalle:'Retiro Externo'},
+      {desde:'21:00',hasta:'22:30',detalle:'Ing. Jaime - Ret. Acosta'}
+    ],
+    'BOLADO JOSE':[
+      {desde:'5:00',hasta:'6:00',detalle:'Ing. Mangini'},
+      {desde:'7:00',hasta:'8:00',detalle:'Ing. Figgini'},
+      {desde:'13:00',hasta:'14:30',detalle:'Ing. Acosta - Ret. Mangini'},
+      {desde:'16:30',hasta:'17:30',detalle:'Ret. Figgini'}
+    ]
+  }};
+}
+
+function viernesTemplate(){
+  return { choferes:{
+    'REINA SEBASTIAN':[
+      {desde:'4:00',hasta:'7:00',detalle:'Recorrido'},
+      {desde:'7:00',hasta:'8:00',detalle:'Recorrido Interno'},
+      {desde:'15:30',hasta:'16:30',detalle:'Retiro Interno'},
+      {desde:'20:00',hasta:'23:00',detalle:'Recorrido'}
+    ],
+    'BARRERA FERNANDO':[
+      {desde:'6:30',hasta:'8:00',detalle:'Recorrido Externo'},
+      {desde:'12:00',hasta:'15:00',detalle:'Recorrido'},
+      {desde:'15:00',hasta:'16:30',detalle:'Retiro Externo'},
+      {desde:'21:00',hasta:'22:30',detalle:'Ing. Jaime - Ret. Acosta'}
+    ],
+    'BOLADO JOSE':[
+      {desde:'5:00',hasta:'6:00',detalle:'Ing. Puebla, Ponce y Ledesma - Ret. Jaime'},
+      {desde:'7:00',hasta:'8:00',detalle:'Ing. Figgini'},
+      {desde:'13:30',hasta:'14:30',detalle:'Ing. Acosta - Ret. Puebla, Ponce y Ledesma'},
+      {desde:'15:30',hasta:'16:30',detalle:'Ret. Figgini'}
+    ]
+  }};
+}
+
+function sabadoTemplate(){
+  return { choferes:{
+    'REINA SEBASTIAN':[
+      {desde:'4:00',hasta:'7:00',detalle:'Recorrido'},
+      {desde:'7:00',hasta:'8:00',detalle:'Recorrido Interno'},
+      {desde:'11:30',hasta:'13:00',detalle:'Retiro Interno'},
+      {desde:'20:00',hasta:'23:00',detalle:'Recorrido'}
+    ],
+    'GONZALEZ ALICIO':[
+      {desde:'6:30',hasta:'8:00',detalle:'Recorrido Externo'},
+      {desde:'11:30',hasta:'12:30',detalle:'Retiro Externo'},
+      {desde:'12:30',hasta:'15:00',detalle:'Recorrido'},
+      {desde:'21:00',hasta:'22:30',detalle:'Ing. Jaime'}
+    ],
+    'BARRERA FERNANDO':[
+      {desde:'5:00',hasta:'6:00',detalle:'Ing. Puebla, Ponce y Ledesma - Ret. Jaime'},
+      {desde:'7:00',hasta:'8:00',detalle:'Ing. Figgini'},
+      {desde:'9:30',hasta:'10:30',detalle:'Ret. Ulises Lucarena y Vera Thiago (10:00 hs)'},
+      {desde:'11:30',hasta:'12:30',detalle:'Ret. Figgini'},
+      {desde:'13:00',hasta:'14:30',detalle:'Ret. Puebla, Ponce y Ledesma'}
+    ]
+  }};
+}
+
+function domingoTemplate(){
+  return { choferes:{
+    'GONZALEZ ALICIO':[
+      {desde:'4:00',hasta:'7:00',detalle:'Recorrido'},
+      {desde:'12:00',hasta:'15:00',detalle:'Recorrido'},
+      {desde:'20:00',hasta:'23:00',detalle:'Recorrido'}
+    ],
+    'REINA SEBASTIAN':[
+      {desde:'5:00',hasta:'6:00',detalle:'Ing. Puebla, Ponce y Ledesma'},
+      {desde:'13:00',hasta:'14:30',detalle:'Ret. Puebla, Ponce y Ledesma'},
+      {desde:'21:00',hasta:'22:30',detalle:'Ing. Jaime'}
+    ]
+  }};
+}
+
+function saveRec(){ localStorage.setItem(SK_R, JSON.stringify(recState)); }
+
+// ── helpers ─────────────────────────────────────────
+function getDayName(dateStr){
+  const d = new Date(dateStr+'T12:00:00');
+  return ['domingo','lunes','martes','miercoles','jueves','viernes','sabado'][d.getDay()];
+}
+
+function getDayData(dateStr){
+  if(!recState.days[dateStr]){
+    const tpl = recState.templates[getDayName(dateStr)];
+    recState.days[dateStr] = JSON.parse(JSON.stringify(tpl || {choferes:{}}));
+  }
+  return recState.days[dateStr];
+}
+
+function parseHours(desde, hasta){
+  const toMin = t => {
+    const [h,m] = t.split(':').map(Number);
+    return h*60+(m||0);
+  };
+  let d=toMin(desde), h=toMin(hasta);
+  if(h<=d) h+=24*60; // overnight
+  return Math.round((h-d)*10/60)/10;
+}
+
+function getTotalHorasByChofer(chofer){
+  let total=0;
+  Object.values(recState.days).forEach(day=>{
+    const turnos = day.choferes[chofer]||[];
+    turnos.forEach(t=>{ total+=parseHours(t.desde,t.hasta); });
+  });
+  return Math.round(total*10)/10;
+}
+
+function getAllChoferes(){
+  const set=new Set(recState.choferes);
+  Object.values(recState.days).forEach(day=>{
+    Object.keys(day.choferes).forEach(c=>set.add(c));
+  });
+  recState.templates && Object.values(recState.templates).forEach(t=>{
+    Object.keys(t.choferes||{}).forEach(c=>set.add(c));
+  });
+  return [...set];
+}
+
+// ── RENDER RECORRIDOS ────────────────────────────────
+function renderRecorridos(){
+  const year=recState.viewYear, month=recState.viewMonth;
+  const monthNames=['Enero','Febrero','Marzo','Abril','Mayo','Junio','Julio','Agosto','Septiembre','Octubre','Noviembre','Diciembre'];
+  const dowNames=['Dom','Lun','Mar','Mié','Jue','Vie','Sáb'];
+
+  const firstDay=new Date(year,month,1).getDay();
+  const daysInMonth=new Date(year,month+1,0).getDate();
+
+  let html=`
+  <div style="padding:20px 24px">
+    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:16px;flex-wrap:wrap;gap:10px">
+      <div class="month-nav">
+        <button class="btn btn-outline btn-sm" onclick="recPrevMonth()">‹</button>
+        <span class="month-title">${monthNames[month].toUpperCase()} ${year}</span>
+        <button class="btn btn-outline btn-sm" onclick="recNextMonth()">›</button>
+      </div>
+      <div style="display:flex;gap:8px;flex-wrap:wrap">
+        <button class="btn btn-outline btn-sm" onclick="openChoferesMgr()">👤 Gestionar Choferes</button>
+        <button class="btn btn-outline btn-sm" onclick="openTemplateEditor()">⚙ Editar Plantillas</button>
+        <button class="btn btn-blue btn-sm" onclick="switchAppTab('liquidacion')">💰 Ver Liquidación</button>
+      </div>
+    </div>
+
+    <div class="dow-headers">
+      <div class="dow-hdr dom">DOM</div>
+      <div class="dow-hdr">LUN</div>
+      <div class="dow-hdr">MAR</div>
+      <div class="dow-hdr">MIÉ</div>
+      <div class="dow-hdr">JUE</div>
+      <div class="dow-hdr vie">VIE</div>
+      <div class="dow-hdr sab">SÁB</div>
+    </div>
+    <div class="rec-calendar">
+  `;
+
+  // Empty cells before first day
+  for(let i=0;i<firstDay;i++) html+=`<div class="rec-day-empty"></div>`;
+
+  for(let d=1;d<=daysInMonth;d++){
+    const dateStr=`${year}-${String(month+1).padStart(2,'0')}-${String(d).padStart(2,'0')}`;
+    const dayName=getDayName(dateStr);
+    const dayData=getDayData(dateStr);
+    const isHoy=dateStr===new Date().toISOString().split('T')[0];
+    const hdrClass=dayName==='domingo'?'domingo':dayName==='sabado'?'sabado':dayName==='viernes'?'viernes':'';
+
+    html+=`<div class="rec-day-card" ${isHoy?'style="box-shadow:0 0 0 2px var(--accent)"':''}>
+      <div class="rec-day-header ${hdrClass}">
+        <span>${dayName.substring(0,3).toUpperCase()} ${d}</span>
+        <button onclick="addChoferToDay('${dateStr}')" style="background:rgba(255,255,255,.2);border:none;color:#fff;cursor:pointer;border-radius:4px;padding:2px 7px;font-size:12px;font-weight:700">+</button>
+      </div>`;
+
+    const choferes=Object.keys(dayData.choferes);
+    if(choferes.length===0){
+      html+=`<div style="padding:10px;text-align:center;color:var(--muted);font-size:12px">Sin turnos</div>`;
+    } else {
+      choferes.forEach(chofer=>{
+        const turnos=dayData.choferes[chofer]||[];
+        const horas=turnos.reduce((s,t)=>s+parseHours(t.desde,t.hasta),0);
+        html+=`<div class="rec-chofer-block">
+          <div class="rec-chofer-name">
+            <span>${chofer.split(' ')[0]}</span>
+            <span class="hrs">${Math.round(horas*10)/10}h
+              <button onclick="removeChoferFromDay('${dateStr}','${chofer}')" class="rec-del-btn" title="Quitar chofer">✕</button>
+            </span>
+          </div>`;
+        turnos.forEach((t,ti)=>{
+          html+=`<div class="rec-turno">
+            <span class="rec-hora">${t.desde}-${t.hasta}</span>
+            <span class="rec-detalle">${t.detalle}</span>
+            <button onclick="deleteTurno('${dateStr}','${chofer}',${ti})" class="rec-del-btn">✕</button>
+          </div>`;
+        });
+        html+=`<button class="rec-add-btn" onclick="addTurno('${dateStr}','${chofer}')">+ turno</button>
+        </div>`;
+      });
+    }
+    html+=`</div>`;
+  }
+
+  html+=`</div></div>`;
+
+  document.getElementById('app-recorridos').innerHTML=html;
+}
+
+function recPrevMonth(){
+  recState.viewMonth--;
+  if(recState.viewMonth<0){recState.viewMonth=11;recState.viewYear--;}
+  renderRecorridos();
+}
+function recNextMonth(){
+  recState.viewMonth++;
+  if(recState.viewMonth>11){recState.viewMonth=0;recState.viewYear++;}
+  renderRecorridos();
+}
+
+// ── ADD / EDIT TURNOS ────────────────────────────────
+function addTurno(dateStr, chofer){
+  const desde=prompt('Hora desde (ej: 20:00):','');
+  if(!desde||!desde.includes(':')) return;
+  const hasta=prompt('Hora hasta (ej: 23:00):','');
+  if(!hasta||!hasta.includes(':')) return;
+  const detalle=prompt('Detalle:','Recorrido');
+  if(detalle===null) return;
+  const day=getDayData(dateStr);
+  if(!day.choferes[chofer]) day.choferes[chofer]=[];
+  day.choferes[chofer].push({desde,hasta,detalle:detalle||'Recorrido'});
+  saveRec(); renderRecorridos();
+}
+
+function deleteTurno(dateStr, chofer, idx){
+  const day=getDayData(dateStr);
+  if(day.choferes[chofer]) day.choferes[chofer].splice(idx,1);
+  saveRec(); renderRecorridos();
+}
+
+function addChoferToDay(dateStr){
+  const all=getAllChoferes();
+  const chofer=prompt('Nombre del chofer:\n'+all.join('\n'),'');
+  if(!chofer||!chofer.trim()) return;
+  const day=getDayData(dateStr);
+  const nombre=chofer.trim().toUpperCase();
+  if(!day.choferes[nombre]) day.choferes[nombre]=[];
+  saveRec(); renderRecorridos();
+}
+
+function removeChoferFromDay(dateStr, chofer){
+  if(!confirm('¿Quitar a '+chofer+' de este día?')) return;
+  const day=getDayData(dateStr);
+  delete day.choferes[chofer];
+  saveRec(); renderRecorridos();
+}
+
+// ── CHOFERES MANAGER ─────────────────────────────────
+function openChoferesMgr(){
+  const names=recState.choferes;
+  const html=`<div style="padding:20px">
+    <div style="font-family:var(--font-display);font-size:18px;font-weight:800;margin-bottom:12px">GESTIONAR CHOFERES</div>
+    <div id="choferesTags" style="margin-bottom:14px">${names.map((c,i)=>`
+      <span class="chofer-tag">${c}<span class="remove" onclick="removeChofer(${i})">✕</span></span>`).join('')}
+    </div>
+    <div style="display:flex;gap:8px">
+      <input id="newChoferInput" type="text" class="search-box" placeholder="Nuevo chofer (APELLIDO NOMBRE)" style="flex:1">
+      <button class="btn btn-primary" onclick="addChofer()">+ Agregar</button>
+    </div>
+    <div style="margin-top:14px;display:flex;justify-content:flex-end">
+      <button class="btn btn-outline" onclick="closeM('choferModal')">Cerrar</button>
+    </div>
+  </div>`;
+  document.getElementById('choferModalBody').innerHTML=html;
+  openM('choferModal');
+}
+
+function addChofer(){
+  const val=document.getElementById('newChoferInput').value.trim().toUpperCase();
+  if(!val) return;
+  if(!recState.choferes.includes(val)) recState.choferes.push(val);
+  saveRec(); openChoferesMgr();
+}
+
+function removeChofer(i){
+  recState.choferes.splice(i,1);
+  saveRec(); openChoferesMgr();
+}
+
+// ── TEMPLATE EDITOR ──────────────────────────────────
+function openTemplateEditor(){
+  const days=['lunes','martes','miercoles','jueves','viernes','sabado','domingo'];
+  let html=`<div style="padding:20px">
+    <div style="font-family:var(--font-display);font-size:18px;font-weight:800;margin-bottom:4px">PLANTILLAS DE HORARIOS</div>
+    <div style="font-size:12px;color:var(--muted);margin-bottom:14px">Editá los horarios base. Se aplican a todos los días nuevos del mes.</div>
+    <div style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:16px">`;
+  days.forEach(d=>{
+    html+=`<button class="btn btn-sm ${d==='lunes'?'btn-dark':'btn-outline'}" onclick="showTplDay('${d}')" id="tplBtn_${d}">${d.toUpperCase()}</button>`;
+  });
+  html+=`</div><div id="tplDayContent"></div>
+    <div style="margin-top:14px;display:flex;justify-content:flex-end">
+      <button class="btn btn-outline" onclick="closeM('choferModal')">Cerrar</button>
+    </div>
+  </div>`;
+  document.getElementById('choferModalBody').innerHTML=html;
+  openM('choferModal');
+  showTplDay('lunes');
+}
+
+function showTplDay(dayName){
+  document.querySelectorAll('[id^="tplBtn_"]').forEach(b=>b.className=b.className.replace('btn-dark','btn-outline'));
+  const btn=document.getElementById('tplBtn_'+dayName);
+  if(btn) btn.className=btn.className.replace('btn-outline','btn-dark');
+
+  const tpl=recState.templates[dayName]||{choferes:{}};
+  let html=`<div style="border:1.5px solid var(--border);border-radius:10px;overflow:hidden">`;
+  const choferes=Object.keys(tpl.choferes);
+  if(!choferes.length) html+=`<div style="padding:16px;color:var(--muted);font-size:13px">Sin turnos definidos</div>`;
+  choferes.forEach(chofer=>{
+    const turnos=tpl.choferes[chofer]||[];
+    html+=`<div style="border-bottom:1px solid var(--border)">
+      <div style="background:#f0f2f5;padding:6px 12px;font-size:12px;font-weight:700;letter-spacing:.8px;display:flex;justify-content:space-between">
+        <span>${chofer}</span>
+        <button onclick="addTplTurno('${dayName}','${chofer}')" style="background:none;border:none;cursor:pointer;color:var(--accent);font-size:12px;font-weight:700">+ turno</button>
+      </div>`;
+    turnos.forEach((t,ti)=>{
+      html+=`<div style="display:flex;align-items:center;gap:8px;padding:5px 12px;border-bottom:1px solid #f5f5f5;font-size:12px">
+        <span style="font-family:var(--font-mono);color:var(--muted)">${t.desde}-${t.hasta}</span>
+        <span style="flex:1">${t.detalle}</span>
+        <button onclick="delTplTurno('${dayName}','${chofer}',${ti})" class="rec-del-btn">✕</button>
+      </div>`;
+    });
+    html+=`</div>`;
+  });
+  html+=`</div>
+  <div style="margin-top:10px;display:flex;gap:8px">
+    <button class="btn btn-outline btn-sm" onclick="addTplChofer('${dayName}')">+ Agregar chofer</button>
+    <button class="btn btn-danger btn-sm" onclick="removeTplChofer('${dayName}')">- Quitar chofer</button>
+  </div>`;
+  document.getElementById('tplDayContent').innerHTML=html;
+}
+
+function addTplTurno(dayName,chofer){
+  const desde=prompt('Hora desde:',''); if(!desde||!desde.includes(':')) return;
+  const hasta=prompt('Hora hasta:',''); if(!hasta||!hasta.includes(':')) return;
+  const detalle=prompt('Detalle:','Recorrido'); if(detalle===null) return;
+  if(!recState.templates[dayName]) recState.templates[dayName]={choferes:{}};
+  if(!recState.templates[dayName].choferes[chofer]) recState.templates[dayName].choferes[chofer]=[];
+  recState.templates[dayName].choferes[chofer].push({desde,hasta,detalle:detalle||'Recorrido'});
+  saveRec(); showTplDay(dayName);
+}
+function delTplTurno(dayName,chofer,idx){
+  recState.templates[dayName].choferes[chofer].splice(idx,1);
+  saveRec(); showTplDay(dayName);
+}
+function addTplChofer(dayName){
+  const c=prompt('Nombre del chofer:',''); if(!c||!c.trim()) return;
+  if(!recState.templates[dayName]) recState.templates[dayName]={choferes:{}};
+  recState.templates[dayName].choferes[c.trim().toUpperCase()]=[]; 
+  saveRec(); showTplDay(dayName);
+}
+function removeTplChofer(dayName){
+  const choferes=Object.keys(recState.templates[dayName]?.choferes||{});
+  if(!choferes.length) return;
+  const c=prompt('¿Cuál chofer quitar?\n'+choferes.join('\n'),'');
+  if(!c) return;
+  delete recState.templates[dayName].choferes[c.trim().toUpperCase()];
+  saveRec(); showTplDay(dayName);
+}
+
+// ── LIQUIDACION ──────────────────────────────────────
+function renderLiquidacion(){
+  const year=recState.viewYear, month=recState.viewMonth;
+  const monthNames=['Enero','Febrero','Marzo','Abril','Mayo','Junio','Julio','Agosto','Septiembre','Octubre','Noviembre','Diciembre'];
+  const valorHora=recState.valorHora||5805.20;
+
+  // Collect hours per chofer for this month
+  const prefix=`${year}-${String(month+1).padStart(2,'0')}-`;
+  const chofereHoras={};
+
+  Object.entries(recState.days).forEach(([dateStr,day])=>{
+    if(!dateStr.startsWith(prefix)) return;
+    Object.entries(day.choferes).forEach(([chofer,turnos])=>{
+      if(!chofereHoras[chofer]) chofereHoras[chofer]={horas:0,turnos:[]};
+      turnos.forEach(t=>{
+        const h=parseHours(t.desde,t.hasta);
+        chofereHoras[chofer].horas+=h;
+        chofereHoras[chofer].turnos.push({fecha:dateStr,desde:t.desde,hasta:t.hasta,detalle:t.detalle,h});
+      });
+    });
+  });
+
+  // Also count days with templates not yet visited (only saved days count)
+  const totalHorasTodas=Object.values(chofereHoras).reduce((s,c)=>s+c.horas,0);
+  const totalLiquidacion=Object.values(chofereHoras).reduce((s,c)=>s+(c.horas*valorHora),0);
+
+  let html=`<div style="padding:20px 24px">
+    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:16px;flex-wrap:wrap;gap:10px">
+      <div>
+        <div style="font-family:var(--font-display);font-size:22px;font-weight:800;letter-spacing:2px">LIQUIDACIÓN — ${monthNames[month].toUpperCase()} ${year}</div>
+        <div style="font-size:13px;color:var(--muted);margin-top:2px">Valor hora: <strong style="font-family:var(--font-mono)">$${fn(valorHora)}</strong>
+          <button onclick="editValorHora()" style="background:none;border:none;cursor:pointer;color:var(--accent);font-size:12px;font-weight:700;margin-left:8px">✏ editar</button>
+        </div>
+      </div>
+      <div style="text-align:right">
+        <div style="font-size:11px;color:var(--muted);text-transform:uppercase;letter-spacing:.8px">Total horas del mes</div>
+        <div style="font-family:var(--font-display);font-size:28px;font-weight:800;color:var(--blue)">${Math.round(totalHorasTodas*10)/10} hs</div>
+        <div style="font-family:var(--font-display);font-size:22px;font-weight:800;color:var(--green)">$${fn(totalLiquidacion)}</div>
+      </div>
+    </div>`;
+
+  if(!Object.keys(chofereHoras).length){
+    html+=`<div style="background:#fff;border:1.5px solid var(--border);border-radius:12px;padding:40px;text-align:center;color:var(--muted)">
+      No hay turnos registrados para este mes.<br>
+      <button class="btn btn-outline" style="margin-top:12px" onclick="switchAppTab('recorridos')">← Ir a Recorridos</button>
+    </div>`;
+  } else {
+    html+=`<div class="liq-grid">`;
+    Object.entries(chofereHoras).sort((a,b)=>b[1].horas-a[1].horas).forEach(([chofer,data])=>{
+      const horas=Math.round(data.horas*10)/10;
+      const total=horas*valorHora;
+      // Count by day type
+      const diasTrabajados=new Set(data.turnos.map(t=>t.fecha)).size;
+      html+=`<div class="liq-card">
+        <div class="liq-card-header">
+          <div class="liq-chofer-name">${chofer}</div>
+          <div style="text-align:right">
+            <div style="font-family:var(--font-mono);font-size:18px;font-weight:700">${horas} hs</div>
+            <div style="font-size:11px;color:#9ca3af">${diasTrabajados} días</div>
+          </div>
+        </div>
+        <div class="liq-card-body">
+          <div class="liq-row"><span class="liq-label">Horas trabajadas</span><span class="liq-val">${horas} hs</span></div>
+          <div class="liq-row"><span class="liq-label">Valor por hora</span><span class="liq-val">$${fn(valorHora)}</span></div>
+          <div class="liq-row"><span class="liq-label">Días trabajados</span><span class="liq-val">${diasTrabajados}</span></div>
+        </div>
+        <div class="liq-total-row">
+          <span class="liq-total-label">TOTAL</span>
+          <span class="liq-total-val">$${fn(total)}</span>
+        </div>
+      </div>`;
+    });
+    html+=`</div>`;
+  }
+  html+=`</div>`;
+  document.getElementById('app-liquidacion').innerHTML=html;
+}
+
+function editValorHora(){
+  const v=prompt('Nuevo valor por hora:', recState.valorHora||5805.20);
+  if(v&&!isNaN(parseFloat(v))){
+    recState.valorHora=parseFloat(v);
+    saveRec(); renderLiquidacion();
+  }
+}
+
+// ── APP TAB SWITCHER ─────────────────────────────────
+function switchAppTab(tab){
+  document.querySelectorAll('.app-tab').forEach(b=>b.classList.remove('active'));
+  document.querySelectorAll('.app-page').forEach(p=>p.classList.remove('active'));
+  const btn=document.getElementById('tab-'+tab);
+  const page=document.getElementById('app-'+tab);
+  if(btn) btn.classList.add('active');
+  if(page) page.classList.add('active');
+  if(tab==='recorridos') renderRecorridos();
+  if(tab==='liquidacion') renderLiquidacion();
+}
+
+</script>
+
+<!-- MODAL CHOFERES / TEMPLATES -->
+<div class="modal-ov" id="choferModal">
+  <div class="modal" style="max-width:700px">
+    <div id="choferModalBody"></div>
+  </div>
+</div>
+
 </body>
 </html>
