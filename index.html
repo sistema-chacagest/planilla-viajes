@@ -686,124 +686,14 @@ function initRecState(){
 
 function initTemplates(){
   return {
-    'lunes':   lunesJuevesTemplate(),
-    'martes':  lunesJuevesTemplate(),
-    'miercoles': lunesJuevesTemplate(),
-    'jueves':  juevesTemplate(),
-    'viernes': viernesTemplate(),
-    'sabado':  sabadoTemplate(),
-    'domingo': domingoTemplate()
+    'lunes':   {choferes:{}},
+    'martes':  {choferes:{}},
+    'miercoles':{choferes:{}},
+    'jueves':  {choferes:{}},
+    'viernes': {choferes:{}},
+    'sabado':  {choferes:{}},
+    'domingo': {choferes:{}}
   };
-}
-
-function lunesJuevesTemplate(){
-  return { choferes:{
-    'GONZALEZ ALICIO':[
-      {desde:'4:00',hasta:'7:00',detalle:'Recorrido'},
-      {desde:'7:00',hasta:'8:00',detalle:'Recorrido Interno'},
-      {desde:'15:30',hasta:'17:00',detalle:'Retiro Interno'},
-      {desde:'20:00',hasta:'23:00',detalle:'Recorrido'}
-    ],
-    'REINA SEBASTIAN':[
-      {desde:'1:30',hasta:'2:30',detalle:'Retira Roche Marcelo (02:00 hs)'},
-      {desde:'6:30',hasta:'8:00',detalle:'Recorrido Externo'},
-      {desde:'12:00',hasta:'15:00',detalle:'Recorrido'},
-      {desde:'15:30',hasta:'17:00',detalle:'Retiro Externo'},
-      {desde:'21:00',hasta:'22:30',detalle:'Ing. Jaime - Ret. Acosta'}
-    ],
-    'BOLADO JOSE':[
-      {desde:'5:00',hasta:'6:00',detalle:'Ing. Mangini'},
-      {desde:'7:00',hasta:'8:00',detalle:'Ing. Figgini'},
-      {desde:'13:00',hasta:'14:30',detalle:'Ing. Acosta - Ret. Mangini'},
-      {desde:'16:30',hasta:'17:30',detalle:'Ret. Figgini'}
-    ]
-  }};
-}
-
-function juevesTemplate(){
-  return { choferes:{
-    'GONZALEZ ALICIO':[
-      {desde:'4:00',hasta:'7:00',detalle:'Recorrido'},
-      {desde:'7:00',hasta:'8:00',detalle:'Recorrido Interno'},
-      {desde:'15:30',hasta:'17:00',detalle:'Retiro Interno'},
-      {desde:'20:00',hasta:'23:00',detalle:'Recorrido'}
-    ],
-    'REINA SEBASTIAN':[
-      {desde:'1:30',hasta:'2:30',detalle:'Retira Roche Marcelo (02:00 hs)'},
-      {desde:'6:30',hasta:'8:00',detalle:'Recorrido Externo'},
-      {desde:'12:00',hasta:'15:00',detalle:'Recorrido'},
-      {desde:'15:30',hasta:'17:00',detalle:'Retiro Externo'},
-      {desde:'21:00',hasta:'22:30',detalle:'Ing. Jaime - Ret. Acosta'}
-    ],
-    'BOLADO JOSE':[
-      {desde:'5:00',hasta:'6:00',detalle:'Ing. Mangini'},
-      {desde:'7:00',hasta:'8:00',detalle:'Ing. Figgini'},
-      {desde:'13:00',hasta:'14:30',detalle:'Ing. Acosta - Ret. Mangini'},
-      {desde:'16:30',hasta:'17:30',detalle:'Ret. Figgini'}
-    ]
-  }};
-}
-
-function viernesTemplate(){
-  return { choferes:{
-    'REINA SEBASTIAN':[
-      {desde:'4:00',hasta:'7:00',detalle:'Recorrido'},
-      {desde:'7:00',hasta:'8:00',detalle:'Recorrido Interno'},
-      {desde:'15:30',hasta:'16:30',detalle:'Retiro Interno'},
-      {desde:'20:00',hasta:'23:00',detalle:'Recorrido'}
-    ],
-    'BARRERA FERNANDO':[
-      {desde:'6:30',hasta:'8:00',detalle:'Recorrido Externo'},
-      {desde:'12:00',hasta:'15:00',detalle:'Recorrido'},
-      {desde:'15:00',hasta:'16:30',detalle:'Retiro Externo'},
-      {desde:'21:00',hasta:'22:30',detalle:'Ing. Jaime - Ret. Acosta'}
-    ],
-    'BOLADO JOSE':[
-      {desde:'5:00',hasta:'6:00',detalle:'Ing. Puebla, Ponce y Ledesma - Ret. Jaime'},
-      {desde:'7:00',hasta:'8:00',detalle:'Ing. Figgini'},
-      {desde:'13:30',hasta:'14:30',detalle:'Ing. Acosta - Ret. Puebla, Ponce y Ledesma'},
-      {desde:'15:30',hasta:'16:30',detalle:'Ret. Figgini'}
-    ]
-  }};
-}
-
-function sabadoTemplate(){
-  return { choferes:{
-    'REINA SEBASTIAN':[
-      {desde:'4:00',hasta:'7:00',detalle:'Recorrido'},
-      {desde:'7:00',hasta:'8:00',detalle:'Recorrido Interno'},
-      {desde:'11:30',hasta:'13:00',detalle:'Retiro Interno'},
-      {desde:'20:00',hasta:'23:00',detalle:'Recorrido'}
-    ],
-    'GONZALEZ ALICIO':[
-      {desde:'6:30',hasta:'8:00',detalle:'Recorrido Externo'},
-      {desde:'11:30',hasta:'12:30',detalle:'Retiro Externo'},
-      {desde:'12:30',hasta:'15:00',detalle:'Recorrido'},
-      {desde:'21:00',hasta:'22:30',detalle:'Ing. Jaime'}
-    ],
-    'BARRERA FERNANDO':[
-      {desde:'5:00',hasta:'6:00',detalle:'Ing. Puebla, Ponce y Ledesma - Ret. Jaime'},
-      {desde:'7:00',hasta:'8:00',detalle:'Ing. Figgini'},
-      {desde:'9:30',hasta:'10:30',detalle:'Ret. Ulises Lucarena y Vera Thiago (10:00 hs)'},
-      {desde:'11:30',hasta:'12:30',detalle:'Ret. Figgini'},
-      {desde:'13:00',hasta:'14:30',detalle:'Ret. Puebla, Ponce y Ledesma'}
-    ]
-  }};
-}
-
-function domingoTemplate(){
-  return { choferes:{
-    'GONZALEZ ALICIO':[
-      {desde:'4:00',hasta:'7:00',detalle:'Recorrido'},
-      {desde:'12:00',hasta:'15:00',detalle:'Recorrido'},
-      {desde:'20:00',hasta:'23:00',detalle:'Recorrido'}
-    ],
-    'REINA SEBASTIAN':[
-      {desde:'5:00',hasta:'6:00',detalle:'Ing. Puebla, Ponce y Ledesma'},
-      {desde:'13:00',hasta:'14:30',detalle:'Ret. Puebla, Ponce y Ledesma'},
-      {desde:'21:00',hasta:'22:30',detalle:'Ing. Jaime'}
-    ]
-  }};
 }
 
 function saveRec(){ localStorage.setItem(SK_R, JSON.stringify(recState)); }
@@ -856,10 +746,10 @@ function getAllChoferes(){
 function renderRecorridos(){
   const year=recState.viewYear, month=recState.viewMonth;
   const monthNames=['Enero','Febrero','Marzo','Abril','Mayo','Junio','Julio','Agosto','Septiembre','Octubre','Noviembre','Diciembre'];
-  const dowNames=['Dom','Lun','Mar','Mié','Jue','Vie','Sáb'];
 
   const firstDay=new Date(year,month,1).getDay();
   const daysInMonth=new Date(year,month+1,0).getDate();
+  const today=new Date().toISOString().split('T')[0];
 
   let html=`
   <div style="padding:20px 24px">
@@ -870,72 +760,51 @@ function renderRecorridos(){
         <button class="btn btn-outline btn-sm" onclick="recNextMonth()">›</button>
       </div>
       <div style="display:flex;gap:8px;flex-wrap:wrap">
-        <button class="btn btn-outline btn-sm" onclick="openChoferesMgr()">👤 Gestionar Choferes</button>
-        <button class="btn btn-outline btn-sm" onclick="openTemplateEditor()">⚙ Editar Plantillas</button>
-        <button class="btn btn-blue btn-sm" onclick="switchAppTab('liquidacion')">💰 Ver Liquidación</button>
+        <button class="btn btn-outline btn-sm" onclick="openChoferesMgr()">👤 Choferes</button>
+        <button class="btn btn-blue btn-sm" onclick="switchAppTab('liquidacion')">💰 Liquidación</button>
       </div>
     </div>
-
     <div class="dow-headers">
-      <div class="dow-hdr dom">DOM</div>
-      <div class="dow-hdr">LUN</div>
-      <div class="dow-hdr">MAR</div>
-      <div class="dow-hdr">MIÉ</div>
-      <div class="dow-hdr">JUE</div>
-      <div class="dow-hdr vie">VIE</div>
-      <div class="dow-hdr sab">SÁB</div>
+      <div class="dow-hdr dom">DOM</div><div class="dow-hdr">LUN</div><div class="dow-hdr">MAR</div>
+      <div class="dow-hdr">MIÉ</div><div class="dow-hdr">JUE</div><div class="dow-hdr vie">VIE</div><div class="dow-hdr sab">SÁB</div>
     </div>
-    <div class="rec-calendar">
-  `;
+    <div class="rec-calendar">`;
 
-  // Empty cells before first day
   for(let i=0;i<firstDay;i++) html+=`<div class="rec-day-empty"></div>`;
 
   for(let d=1;d<=daysInMonth;d++){
     const dateStr=`${year}-${String(month+1).padStart(2,'0')}-${String(d).padStart(2,'0')}`;
     const dayName=getDayName(dateStr);
-    const dayData=getDayData(dateStr);
-    const isHoy=dateStr===new Date().toISOString().split('T')[0];
+    const dayData=recState.days[dateStr]||{choferes:{}};
+    const isHoy=dateStr===today;
     const hdrClass=dayName==='domingo'?'domingo':dayName==='sabado'?'sabado':dayName==='viernes'?'viernes':'';
-
-    html+=`<div class="rec-day-card" ${isHoy?'style="box-shadow:0 0 0 2px var(--accent)"':''}>
-      <div class="rec-day-header ${hdrClass}">
-        <span>${dayName.substring(0,3).toUpperCase()} ${d}</span>
-        <button onclick="addChoferToDay('${dateStr}')" style="background:rgba(255,255,255,.2);border:none;color:#fff;cursor:pointer;border-radius:4px;padding:2px 7px;font-size:12px;font-weight:700">+</button>
-      </div>`;
-
     const choferes=Object.keys(dayData.choferes);
-    if(choferes.length===0){
-      html+=`<div style="padding:10px;text-align:center;color:var(--muted);font-size:12px">Sin turnos</div>`;
-    } else {
-      choferes.forEach(chofer=>{
-        const turnos=dayData.choferes[chofer]||[];
-        const horas=turnos.reduce((s,t)=>s+parseHours(t.desde,t.hasta),0);
-        html+=`<div class="rec-chofer-block">
-          <div class="rec-chofer-name">
-            <span>${chofer.split(' ')[0]}</span>
-            <span class="hrs">${Math.round(horas*10)/10}h
-              <button onclick="removeChoferFromDay('${dateStr}','${chofer}')" class="rec-del-btn" title="Quitar chofer">✕</button>
-            </span>
-          </div>`;
-        turnos.forEach((t,ti)=>{
-          html+=`<div class="rec-turno">
-            <span class="rec-hora">${t.desde}-${t.hasta}</span>
-            <span class="rec-detalle">${t.detalle}</span>
-            <button onclick="deleteTurno('${dateStr}','${chofer}',${ti})" class="rec-del-btn">✕</button>
-          </div>`;
-        });
-        html+=`<button class="rec-add-btn" onclick="addTurno('${dateStr}','${chofer}')">+ turno</button>
+    const totalHs=choferes.reduce((s,c)=>{
+      return s+(dayData.choferes[c]||[]).reduce((ss,t)=>ss+parseHours(t.desde,t.hasta),0);
+    },0);
+    const hasTurnos=choferes.length>0;
+
+    html+=`<div class="rec-day-card ${hasTurnos?'has-turnos':''}" 
+      style="${isHoy?'box-shadow:0 0 0 3px var(--accent);':''}cursor:pointer"
+      onclick="openDayModal('${dateStr}')">
+      <div class="rec-day-header ${hdrClass}">
+        <span style="font-size:13px">${dayName.substring(0,3).toUpperCase()} ${d}</span>
+        ${hasTurnos?`<span style="font-size:10px;background:rgba(255,255,255,.2);padding:1px 6px;border-radius:10px">${choferes.length} chof</span>`:'<span style="font-size:11px;opacity:.6">+</span>'}
+      </div>
+      ${hasTurnos ? choferes.map(c=>{
+        const hs=Math.round((dayData.choferes[c]||[]).reduce((s,t)=>s+parseHours(t.desde,t.hasta),0)*10)/10;
+        return `<div style="padding:3px 8px;font-size:11px;border-bottom:1px solid #f0f2f5;display:flex;justify-content:space-between">
+          <span style="font-weight:600">${c.split(' ')[0]}</span>
+          <span style="font-family:var(--font-mono);color:var(--accent)">${hs}h</span>
         </div>`;
-      });
-    }
-    html+=`</div>`;
+      }).join('') : `<div style="padding:12px;text-align:center;color:#d1d5db;font-size:22px">+</div>`}
+    </div>`;
   }
 
   html+=`</div></div>`;
-
   document.getElementById('app-recorridos').innerHTML=html;
 }
+
 
 function recPrevMonth(){
   recState.viewMonth--;
@@ -1196,12 +1065,163 @@ function switchAppTab(tab){
   if(tab==='liquidacion') renderLiquidacion();
 }
 
+
+// ── DAY MODAL ────────────────────────────────────────
+let currentDayStr = null;
+
+function openDayModal(dateStr){
+  currentDayStr = dateStr;
+  renderDayModal();
+  openM('dayModal');
+}
+
+function renderDayModal(){
+  const dateStr = currentDayStr;
+  if(!recState.days[dateStr]) recState.days[dateStr]={choferes:{}};
+  const day = recState.days[dateStr];
+  const d = new Date(dateStr+'T12:00:00');
+  const dayNames=['Domingo','Lunes','Martes','Miércoles','Jueves','Viernes','Sábado'];
+  const monthNames=['Enero','Febrero','Marzo','Abril','Mayo','Junio','Julio','Agosto','Septiembre','Octubre','Noviembre','Diciembre'];
+  const dayName = dayNames[d.getDay()];
+  const dayNum = d.getDate();
+  const monthName = monthNames[d.getMonth()];
+  const choferes = Object.keys(day.choferes);
+
+  // Build printable card
+  let card = `<div id="dayPrintCard" style="background:#fff;font-family:'Barlow',sans-serif;width:100%;max-width:700px;margin:0 auto;border:2px solid #222">
+    <!-- Header -->
+    <div style="display:flex;align-items:center;justify-content:space-between;padding:12px 18px;border-bottom:2px solid #222">
+      <img src="${document.querySelector('.brand-logo').src}" style="height:48px" alt="Logo">
+      <div style="text-align:center;flex:1">
+        <div style="font-family:'Barlow Condensed',sans-serif;font-size:22px;font-weight:800;letter-spacing:2px">TRASLADO PERSONAL .COFCO.</div>
+      </div>
+      <div style="font-size:40px">🚌</div>
+    </div>`;
+
+  if(!choferes.length){
+    card += `<div style="padding:30px;text-align:center;color:#9ca3af;font-size:14px">Sin turnos cargados.<br>Usá el botón + para agregar choferes.</div>`;
+  } else {
+    choferes.forEach((chofer,ci) => {
+      const turnos = day.choferes[chofer]||[];
+      const hdrBg = ci===0?'#c0392b':'#1a1a1a';
+      card += `<div>
+        <div style="background:${hdrBg};color:#fff;padding:7px 18px;display:flex;justify-content:space-between;font-family:'Barlow Condensed',sans-serif;font-size:16px;font-weight:700;letter-spacing:1px">
+          <span>${dayName.toUpperCase()} ${dayNum}</span>
+          <span>${chofer.toUpperCase()}</span>
+        </div>
+        <table style="width:100%;border-collapse:collapse">`;
+      turnos.forEach(t => {
+        card += `<tr style="border-bottom:1px solid #e5e7eb">
+          <td style="padding:7px 18px;font-family:'JetBrains Mono',monospace;font-weight:700;font-size:14px;white-space:nowrap;width:130px">${t.desde}</td>
+          <td style="padding:7px 4px;font-family:'JetBrains Mono',monospace;font-weight:700;font-size:14px;white-space:nowrap;width:130px">${t.hasta}</td>
+          <td style="padding:7px 18px;font-style:italic;font-size:14px">${t.detalle}</td>
+        </tr>`;
+      });
+      card += `</table></div>`;
+    });
+  }
+  card += `</div>`;
+
+  // Modal content
+  document.getElementById('dayModalBody').innerHTML = `
+    <div style="display:flex;justify-content:space-between;align-items:center;padding:16px 20px;border-bottom:1.5px solid var(--border)">
+      <div style="font-family:var(--font-display);font-size:20px;font-weight:800;letter-spacing:1px">
+        ${dayName.toUpperCase()} ${dayNum} DE ${monthName.toUpperCase()}
+      </div>
+      <div style="display:flex;gap:8px;align-items:center">
+        <button class="btn btn-green btn-sm" onclick="downloadDayJPG()">⬇ Descargar JPG</button>
+        <button class="x-btn" onclick="closeM('dayModal')">✕</button>
+      </div>
+    </div>
+    <div style="padding:16px 20px">
+      ${card}
+      <div style="margin-top:14px;display:flex;gap:8px;flex-wrap:wrap">
+        <button class="btn btn-primary btn-sm" onclick="addChoferToDay2()">+ Agregar Chofer</button>
+        ${choferes.map(c=>`<button class="btn btn-outline btn-sm" onclick="addTurnoModal('${c}')">+ Turno a ${c.split(' ')[0]}</button>`).join('')}
+        ${choferes.map(c=>`<button class="btn btn-danger btn-sm" onclick="removeChoferModal('${c}')">✕ ${c.split(' ')[0]}</button>`).join('')}
+      </div>
+    </div>`;
+}
+
+function addChoferToDay2(){
+  const all = recState.choferes.length ? recState.choferes : getAllChoferes();
+  const opts = all.length ? all.join('\n') : '';
+  const chofer = prompt('Nombre del chofer:' + (opts?'\n'+opts:''), '');
+  if(!chofer||!chofer.trim()) return;
+  const nombre = chofer.trim().toUpperCase();
+  if(!recState.days[currentDayStr]) recState.days[currentDayStr]={choferes:{}};
+  if(!recState.days[currentDayStr].choferes[nombre]) recState.days[currentDayStr].choferes[nombre]=[];
+  saveRec(); renderDayModal(); renderRecorridos();
+}
+
+function addTurnoModal(chofer){
+  const desde = prompt('Hora DESDE (ej: 20:00):','');
+  if(!desde||!desde.includes(':')) return;
+  const hasta = prompt('Hora HASTA (ej: 23:00):','');
+  if(!hasta||!hasta.includes(':')) return;
+  const detalle = prompt('Detalle:','Recorrido');
+  if(detalle===null) return;
+  recState.days[currentDayStr].choferes[chofer].push({desde,hasta,detalle:detalle||'Recorrido'});
+  saveRec(); renderDayModal(); renderRecorridos();
+}
+
+function removeChoferModal(chofer){
+  if(!confirm('¿Quitar a '+chofer+' de este día?')) return;
+  delete recState.days[currentDayStr].choferes[chofer];
+  saveRec(); renderDayModal(); renderRecorridos();
+}
+
+function deleteTurnoModal(chofer, idx){
+  recState.days[currentDayStr].choferes[chofer].splice(idx,1);
+  saveRec(); renderDayModal();
+}
+
+async function downloadDayJPG(){
+  const card = document.getElementById('dayPrintCard');
+  if(!card){ toast('Error al generar imagen','err'); return; }
+  
+  // Use html2canvas
+  if(typeof html2canvas === 'undefined'){
+    toast('Cargando librería...','');
+    const script = document.createElement('script');
+    script.src = 'https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js';
+    script.onload = () => doDownloadJPG(card);
+    document.head.appendChild(script);
+  } else {
+    doDownloadJPG(card);
+  }
+}
+
+async function doDownloadJPG(card){
+  try {
+    const canvas = await html2canvas(card, {scale:2, useCORS:true, backgroundColor:'#ffffff'});
+    const link = document.createElement('a');
+    const d = new Date(currentDayStr+'T12:00:00');
+    const dayNames=['domingo','lunes','martes','miercoles','jueves','viernes','sabado'];
+    link.download = `COFCO_${dayNames[d.getDay()]}_${currentDayStr}.jpg`;
+    link.href = canvas.toDataURL('image/jpeg', 0.95);
+    link.click();
+    toast('JPG descargado ✓','ok');
+  } catch(e) {
+    toast('Error al generar JPG','err');
+    console.error(e);
+  }
+}
+
 </script>
 
 <!-- MODAL CHOFERES / TEMPLATES -->
 <div class="modal-ov" id="choferModal">
   <div class="modal" style="max-width:700px">
     <div id="choferModalBody"></div>
+  </div>
+</div>
+
+
+<!-- MODAL DIA -->
+<div class="modal-ov" id="dayModal">
+  <div class="modal" style="max-width:760px">
+    <div id="dayModalBody"></div>
   </div>
 </div>
 
