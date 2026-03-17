@@ -498,11 +498,13 @@ function renderDayModal(){
   const MN=['Enero','Febrero','Marzo','Abril','Mayo','Junio','Julio','Agosto','Septiembre','Octubre','Noviembre','Diciembre'];
   const dayName=DN[d.getDay()],dayNum=d.getDate(),mName=MN[d.getMonth()];
   const chs=Object.keys(day.choferes);
+  const logoEl=document.querySelector('.brand-logo');
+  const logoSrc=logoEl?logoEl.src:'';
 
   // Tarjeta imprimible
   let card=`<div id="dayPrintCard" style="background:#fff;font-family:Arial,sans-serif;width:100%;border:2px solid #222">
     <div style="display:flex;align-items:center;justify-content:space-between;padding:10px 16px;border-bottom:3px solid #c0392b">
-      <img src="${document.querySelector('.brand-logo').src}" style="height:44px" alt="Logo">
+      ${logoSrc?`<img src="${logoSrc}" style="height:44px" alt="Logo" crossorigin="anonymous">`:`<div style="font-family:Arial;font-size:13px;font-weight:900">CNT SRL</div>`}
       <div style="text-align:center;flex:1"><div style="font-size:20px;font-weight:900;letter-spacing:2px">TRASLADO PERSONAL · COFCO</div></div>
       <div style="font-size:36px">🚌</div>
     </div>`;
@@ -527,6 +529,7 @@ function renderDayModal(){
       <div style="font-family:var(--font-display);font-size:19px;font-weight:800;letter-spacing:1px">${dayName.toUpperCase()} ${dayNum} DE ${mName.toUpperCase()}</div>
       <div style="display:flex;gap:8px;align-items:center">
         <button class="btn btn-green btn-sm" onclick="downloadDayJPG()">📷 Descargar JPG</button>
+        <button class="btn btn-blue btn-sm" onclick="copiarDiaAnterior('${dateStr}')">📋 Copiar día anterior</button>
         <button class="x-btn" onclick="closeM('dayModal')">✕</button>
       </div>
     </div>
@@ -543,6 +546,26 @@ function renderDayModal(){
 function addChoferToDay2(){const all=recState.choferes.length?recState.choferes:getAllChoferes();const chofer=prompt('Nombre del chofer:'+(all.length?'\n'+all.join('\n'):''),'');if(!chofer||!chofer.trim())return;const nombre=chofer.trim().toUpperCase();if(!recState.days[currentDayStr])recState.days[currentDayStr]={choferes:{}};if(!recState.days[currentDayStr].choferes[nombre])recState.days[currentDayStr].choferes[nombre]=[];saveRec();renderDayModal();renderRecorridos();}
 function addTurnoModal(chofer){const desde=prompt('Hora DESDE (ej: 20:00):','');if(!desde||!desde.includes(':'))return;const hasta=prompt('Hora HASTA (ej: 23:00):','');if(!hasta||!hasta.includes(':'))return;const detalle=prompt('Detalle:','Recorrido');if(detalle===null)return;recState.days[currentDayStr].choferes[chofer].push({desde,hasta,detalle:detalle||'Recorrido'});saveRec();renderDayModal();renderRecorridos();}
 function removeChoferModal(chofer){if(!confirm('¿Quitar a '+chofer+' de este día?'))return;delete recState.days[currentDayStr].choferes[chofer];saveRec();renderDayModal();renderRecorridos();}
+
+function copiarDiaAnterior(dateStr){
+  const d=new Date(dateStr+'T12:00:00');
+  const prev=new Date(d);
+  prev.setDate(prev.getDate()-1);
+  const prevStr=prev.toISOString().split('T')[0];
+  const prevDay=prev.getDate();
+  const prevData=recState.days[prevStr];
+  if(!prevData||!Object.keys(prevData.choferes).length){
+    toast('El día '+prevDay+' no tiene recorridos cargados','err');
+    return;
+  }
+  if(!confirm('¿Copiar todos los choferes y turnos del día '+prevDay+' a este día?\nSe reemplazará lo que haya cargado.'))return;
+  // Deep copy
+  recState.days[dateStr]=JSON.parse(JSON.stringify(prevData));
+  saveRec();
+  renderDayModal();
+  renderRecorridos();
+  toast('Día '+prevDay+' copiado ✓','ok');
+}
 
 async function downloadDayJPG(){
   const card=document.getElementById('dayPrintCard');
@@ -613,13 +636,7 @@ function renderCronograma(){
   // Build header
   let thead=`<thead><tr><th style="min-width:130px;text-align:left;padding:6px 10px;position:sticky;left:0;z-index:3">NOMBRE</th>`;
   for(let d=1;d<=dim;d++){
-    const dw=new Date(y,m,d).getDay();
-    const isDOM=dw===0,isSAB=dw===6;
-    const cls=isDOM?' class="dom-col"':isSAB?' class="sab-col"':'';
-    const label=['D','L','M','X','J','V','S'][dw];
-    thead+=`<th${cls}><div>${label}</div><div>${d}</div></th>`;
-  }
-  thead+=`<th style="min-width:28px;background:#374151">T</th><th style="min-width:28px;background:#374151">F</th><th style="min-width:28px;background:#374151">VAC</th></tr></thead>`;
+    const dw=new Date(
 
   // Build body
   let tbody=`<tbody>`;
