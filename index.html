@@ -163,13 +163,13 @@ tfoot tr td{background:#f7f8fa;font-weight:700;border-top:2px solid var(--border
 
   <div class="tarifa-strip">
     <span style="font-family:var(--font-display);font-size:13px;font-weight:700;letter-spacing:1px;color:var(--muted)">TARIFAS:</span>
-    <span class="tarifa-label">$/KM</span><input type="number" class="tarifa-input" id="tKm" value="407.22" step="0.01" onchange="recalcAll()">
+    <span class="tarifa-label">$/KM</span><input type="number" class="tarifa-input" id="tKm" value="497.22" step="0.01" onchange="recalcAll()">
     <div class="t-sep"></div>
-    <span class="tarifa-label">$/H espera</span><input type="number" class="tarifa-input" id="tEsp" value="380" step="0.01" onchange="recalcAll()">
+    <span class="tarifa-label">$/H espera</span><input type="number" class="tarifa-input" id="tEsp" value="3808.60" step="0.01" onchange="recalcAll()">
     <div class="t-sep"></div>
-    <span class="tarifa-label">Base AUTO</span><input type="number" class="tarifa-input" id="tAuto" value="21598.58" step="0.01" onchange="recalcAll()">
+    <span class="tarifa-label">Base AUTO</span><input type="number" class="tarifa-input" id="tAuto" value="21698.58" step="0.01" onchange="recalcAll()">
     <div class="t-sep"></div>
-    <span class="tarifa-label">Base COMBI</span><input type="number" class="tarifa-input" id="tCombi" value="43397.15" step="0.01" onchange="recalcAll()">
+    <span class="tarifa-label">Base COMBI</span><input type="number" class="tarifa-input" id="tCombi" value="43397.16" step="0.01" onchange="recalcAll()">
   </div>
 
   <div class="toolbar">
@@ -346,13 +346,18 @@ function calcRow(r,t) {
   const km=parseFloat(r.km)||0;
   const hb=parseFloat(r.hbEsp)||0;
   const ce=parseFloat(r.costoExt)||0;
-  const base=r.tipo==='COMBI'?(t.combi||43397.15):(t.auto||21598.58);
-  const kmV=km*(t.km||407.22);
-  const espV=hb*(t.esp||380);
+  const base=r.tipo==='COMBI'?(t.combi||43397.16):(t.auto||21698.58);
+  const kmV=km*(t.km||497.22);
+  const espV=hb*(t.esp||3808.60);
   r.kmV=kmV>0?f2(kmV):'';
   r.espV=espV>0?f2(espV):'';
-  r.imp=f2(base);
-  r.impTot=f2(base+ce+kmV+espV);
+  if(km>0){
+    r.imp=f2(kmV+espV);
+    r.impTot=f2(kmV+espV+ce);
+  } else {
+    r.imp=f2(base);
+    r.impTot=f2(base+ce);
+  }
 }
 function recalcAll() {
   const p=curP(); if(!p) return;
@@ -522,8 +527,69 @@ function toast(msg,type=''){
 document.querySelectorAll('.modal-ov,.confirm-ov').forEach(el=>
   el.addEventListener('click',e=>{if(e.target===el)el.classList.remove('open')})
 );
-// INIT
-renderAll();
-</script>
+// INIT — preload existing data if period is empty
+(function preload(){
+  const p = curP();
+  if(!p || p.rows.length > 0) { renderAll(); return; }
+
+  const tarifas = { km:497.22, esp:3808.60, auto:21698.58, combi:43397.16 };
+  p.t = tarifas;
+  p.name = 'FEBRERO - MARZO 2026';
+
+  const raw = [
+    {fecha:'2026-02-25',chofer:'BOLADO',horario:'18:00',detalle:'RETIRA VENCHE DANIEL',costoExt:'',tipo:'AUTO',km:'',hbEsp:''},
+    {fecha:'2026-02-25',chofer:'BOLADO',horario:'20:00',detalle:'RETIRA FIGGINI CRISTIAN Y TORO HECTOR',costoExt:'5646.73',tipo:'AUTO',km:'',hbEsp:''},
+    {fecha:'2026-02-26',chofer:'YANNIBELLI',horario:'16:00',detalle:'TRASLADO DE MARIANO BELLADA DESDE JUNIN AL HOTEL HORIZONTE DE SAN LORENZO',costoExt:'',tipo:'AUTO',km:'468',hbEsp:''},
+    {fecha:'2026-02-26',chofer:'BOLADO',horario:'18:00',detalle:'RETIRA VENCHE DANIEL',costoExt:'',tipo:'AUTO',km:'',hbEsp:''},
+    {fecha:'2026-02-26',chofer:'REINA',horario:'20:00',detalle:'RETIRA FIGGINI CRISTIAN, ARGUELLO, HAILANT SEBASTIAN, ZALAZAR ESTEBAN, RETAMOZO JONA, MACHELLO AGUSTIN, TORO HECTOR, RAGUZA MAXIMO Y FERREYRA SAMUEL',costoExt:'',tipo:'COMBI',km:'',hbEsp:''},
+    {fecha:'2026-02-27',chofer:'MUGNOLO',horario:'16:00',detalle:'TRASLADO DE PLANTA TIMBUES A JUNIN AL OPERARIO MARIANO BELLADA',costoExt:'',tipo:'AUTO',km:'484',hbEsp:''},
+    {fecha:'2026-02-27',chofer:'GONZALEZ',horario:'20:00',detalle:'RETIRA TORO HECTOR, FERREYRA SAMUEL, RAGUZA MAXIMO, MACHELLO AGUSTIN',costoExt:'',tipo:'COMBI',km:'',hbEsp:''},
+    {fecha:'2026-02-28',chofer:'BOLADO',horario:'10:00',detalle:'RETIRA YASMIN RECALT, VERA THIAGO Y LUCARENA ULISES',costoExt:'11293.46',tipo:'AUTO',km:'',hbEsp:''},
+    {fecha:'2026-02-28',chofer:'GONZALEZ',horario:'20:00',detalle:'RETIRA TORO HECTOR, FERREYRA SAMUEL, FIGGINI CRISTIAN, MACHELLO AGUSTIN',costoExt:'',tipo:'COMBI',km:'',hbEsp:''},
+    {fecha:'2026-03-01',chofer:'REINA',horario:'10:00',detalle:'RETIRA YAZMIN RECALT',costoExt:'',tipo:'AUTO',km:'',hbEsp:''},
+    {fecha:'2026-03-02',chofer:'LORONI',horario:'4:30',detalle:'TRASLADO DE GUADALUPE LESCANO DESDE JUNIN AL PGSM',costoExt:'',tipo:'AUTO',km:'476',hbEsp:''},
+    {fecha:'2026-03-02',chofer:'GONZALEZ',horario:'9:00',detalle:'RETIRA LUGLI JUAN',costoExt:'',tipo:'AUTO',km:'',hbEsp:''},
+    {fecha:'2026-03-02',chofer:'GONZALEZ',horario:'18:00',detalle:'INGRESA GONZALEZ MATIAS - RETIRA VIALE WALDO',costoExt:'5646.73',tipo:'AUTO',km:'',hbEsp:''},
+    {fecha:'2026-03-02',chofer:'BOLADO',horario:'20:00',detalle:'RETIRA TORO HECTOR Y MACHELLO AGUSTIN',costoExt:'5646.73',tipo:'AUTO',km:'',hbEsp:''},
+    {fecha:'2026-03-03',chofer:'PESOINBOURE',horario:'7:30',detalle:'TRASLADO DESDE JUNIN A BALCARCE AL OPERARIO DIEGO RODRIGUEZ TERRONES',costoExt:'',tipo:'AUTO',km:'980',hbEsp:''},
+    {fecha:'2026-03-03',chofer:'BOLADO',horario:'10:00',detalle:'RETIRA GONZALEZ MATIAS',costoExt:'',tipo:'AUTO',km:'',hbEsp:''},
+    {fecha:'2026-03-03',chofer:'REINA',horario:'20:00',detalle:'RETIRA FIGGINI CRISTIAN, TORO HECTOR, MACHELLO AGUSTIN, FERREYRA SAMUEL Y HISSIRIBEHERE GIANFRANCO',costoExt:'',tipo:'COMBI',km:'',hbEsp:''},
+    {fecha:'2026-03-04',chofer:'BOLADO',horario:'15:00',detalle:'RETIRA VIALE WALDO',costoExt:'',tipo:'AUTO',km:'',hbEsp:''},
+    {fecha:'2026-03-04',chofer:'GONZALEZ',horario:'18:00',detalle:'RETIRA HISSIRIBEHERE GIANFRANCO',costoExt:'',tipo:'AUTO',km:'',hbEsp:''},
+    {fecha:'2026-03-04',chofer:'GONZALEZ',horario:'20:00',detalle:'RETIRA RAGUZA MAXIMO, TORO HECTOR Y FERREYRA SAMUEL',costoExt:'11293.46',tipo:'AUTO',km:'',hbEsp:''},
+    {fecha:'2026-03-05',chofer:'YEBER',horario:'12:30',detalle:'TRASLADO DESDE VILLEGAS A JUNIN AL OPERARIO RODRIGUEZ TERRONES DIEGO',costoExt:'',tipo:'AUTO',km:'412',hbEsp:''},
+    {fecha:'2026-03-05',chofer:'REINA',horario:'18:00',detalle:'INGRESA HISSIRIBEHERE GIANFRANCO - RETIRA BEVILACKUA BENJAMIN, FERREYRA SAMUEL, ZALAZAR BRUNO Y MACHELLO AGUSTIN',costoExt:'',tipo:'COMBI',km:'',hbEsp:''},
+    {fecha:'2026-03-05',chofer:'BOLADO',horario:'20:00',detalle:'RETIRA FIGGINI CRISTIAN, RAGUZA MAXIMO Y TORO HECTOR',costoExt:'11293.46',tipo:'AUTO',km:'',hbEsp:''},
+    {fecha:'2026-03-06',chofer:'TOLEDO',horario:'8:30',detalle:'TRASLADOS DE LOS OPERARIOS VAZQUE ALEXIS Y ALTAMIRANO LEONARDO DESDE JUNIN A SAN NICOLAS - CON ESPERA',costoExt:'',tipo:'AUTO',km:'330',hbEsp:'9'},
+    {fecha:'2026-03-06',chofer:'BOLADO',horario:'10:00',detalle:'RETIRA SANCHEZ DIEGO',costoExt:'',tipo:'AUTO',km:'',hbEsp:''},
+    {fecha:'2026-03-06',chofer:'GONZALEZ',horario:'18:00',detalle:'RETIRA RAGUZA MAXIMO, HISSIRIBEHERE GIANFRANCO, TORO HECTOR, FIGGINI CRISTIAN, ZALAZAR BRUNO Y VUGLIOTTI WALTER',costoExt:'',tipo:'COMBI',km:'',hbEsp:''},
+    {fecha:'2026-03-06',chofer:'BOLADO',horario:'20:00',detalle:'RETIRA FERREYRA SAMUEL',costoExt:'',tipo:'AUTO',km:'',hbEsp:''},
+    {fecha:'2026-03-07',chofer:'REINA',horario:'10:00',detalle:'RETIRA LUCARENA ULISES, VERA THIAGO, MELVIHILL Y PALOMINO',costoExt:'',tipo:'COMBI',km:'',hbEsp:''},
+    {fecha:'2026-03-07',chofer:'BOLADO',horario:'18:00',detalle:'INGRESA ROZUADONSQUEY CLARA - RETIRA ROMERO MARIA',costoExt:'5646.73',tipo:'AUTO',km:'',hbEsp:''},
+    {fecha:'2026-03-07',chofer:'REINA',horario:'20:00',detalle:'RETIRA RAGUZA MAXIMO, ZALAZAR BRUNO, FERREYRA SAMUEL, TORO HECTOR Y MACHELLO AGUSTIN',costoExt:'',tipo:'COMBI',km:'',hbEsp:''},
+    {fecha:'2026-03-08',chofer:'BOLADO',horario:'2:00',detalle:'RETIRA CLARA ROZUADONSQUEY',costoExt:'',tipo:'AUTO',km:'',hbEsp:''},
+    {fecha:'2026-03-08',chofer:'BOLADO',horario:'10:00',detalle:'RETIRA SANCHEZ DIEGO',costoExt:'',tipo:'AUTO',km:'',hbEsp:''},
+    {fecha:'2026-03-08',chofer:'BOLADO',horario:'18:00',detalle:'RETIRA TALLARICO NICOLAS',costoExt:'',tipo:'AUTO',km:'',hbEsp:''},
+    {fecha:'2026-03-09',chofer:'BOLADO',horario:'10:00',detalle:'RETIRA SANCHEZ DIEGO',costoExt:'',tipo:'AUTO',km:'',hbEsp:''},
+    {fecha:'2026-03-09',chofer:'REINA',horario:'19:00',detalle:'INGRESA TORO HECTOR',costoExt:'',tipo:'AUTO',km:'',hbEsp:''},
+    {fecha:'2026-03-10',chofer:'MEDINA',horario:'5:00',detalle:'TRASLADO DESDE JUNIN A TIMBUES A LA OPERARIO IGLESIAS GISELA - CON ESPERA',costoExt:'',tipo:'AUTO',km:'484',hbEsp:'8'},
+    {fecha:'2026-03-10',chofer:'REINA',horario:'18:00',detalle:'INGRESA TORO HECTOR',costoExt:'',tipo:'AUTO',km:'',hbEsp:''},
+    {fecha:'2026-03-10',chofer:'BARRERA',horario:'20:00',detalle:'RETIRA RAGUSA MAXIMO, MACHELLO AGUSTIN, HAILANT SEBASTIAN, CERUNDULO DAVID, ARGUELLO FRANCO, OREJON FRANCO, MONSON NICOLAS Y RODRIGUEZ RENSO',costoExt:'',tipo:'COMBI',km:'',hbEsp:''},
+    {fecha:'2026-03-11',chofer:'BARRERA',horario:'2:00',detalle:'INGRESA MONZON ELIO',costoExt:'',tipo:'AUTO',km:'',hbEsp:''},
+    {fecha:'2026-03-11',chofer:'BOLADO',horario:'10:00',detalle:'RETIRA AGUIRRE RAMON',costoExt:'',tipo:'AUTO',km:'',hbEsp:''},
+    {fecha:'2026-03-11',chofer:'BOLADO',horario:'18:00',detalle:'INGRESA TORO HECTOR',costoExt:'',tipo:'AUTO',km:'',hbEsp:''},
+    {fecha:'2026-03-11',chofer:'BARRERA',horario:'20:00',detalle:'RETIRA PALOMERO BAUTISTA, BEVILACKUA BENJAMIN, FERREYRA SAMUEL Y OREJON FRANCO',costoExt:'',tipo:'COMBI',km:'',hbEsp:''},
+  ];
+
+  raw.forEach(r => {
+    const row = newRow();
+    Object.assign(row, r);
+    calcRow(row, tarifas);
+    p.rows.push(row);
+  });
+
+  save();
+  renderAll();
+})();</script>
 </body>
 </html>
