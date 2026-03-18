@@ -7,6 +7,8 @@
 <link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@400;600;700;800&family=Barlow:wght@300;400;500;600&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
 <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-database-compat.js"></script>
 <style>
 :root{
   --bg:#f0f2f5;--surface:#fff;--border:#dde1e8;
@@ -194,6 +196,7 @@ tfoot tr td{background:#f7f8fa;font-weight:700;border-top:2px solid var(--border
     </div>
   </div>
   <div class="header-right">
+    <span id="fb-status" style="font-size:11px;padding:4px 10px;border-radius:20px;background:rgba(255,255,255,.1);color:#9ca3af;font-weight:600">⏳ Conectando...</span>
     <button class="btn btn-outline btn-sm" onclick="openPeriodsModal()">📁 Períodos</button>
     <button class="btn btn-blue btn-sm" onclick="exportExcel()">⬇ Excel</button>
     <button class="btn btn-yellow btn-sm" onclick="confirmFinalizar()">🔒 Finalizar Período</button>
@@ -354,6 +357,54 @@ tfoot tr td{background:#f7f8fa;font-weight:700;border-top:2px solid var(--border
 
 <script>
 // ══════════════════════════════════════════════════════════
+// FIREBASE CONFIG
+// ══════════════════════════════════════════════════════════
+const firebaseConfig = {
+  apiKey: "AIzaSyDzPRs6nGu1J-Eq8z_jpdpDIJgvT6_qyVg",
+  authDomain: "cofco-45a09.firebaseapp.com",
+  databaseURL: "https://cofco-45a09-default-rtdb.firebaseio.com",
+  projectId: "cofco-45a09",
+  storageBucket: "cofco-45a09.firebasestorage.app",
+  messagingSenderId: "434823303172",
+  appId: "1:434823303172:web:1d41c34c565916fdb6a551"
+};
+firebase.initializeApp(firebaseConfig);
+const db = firebase.database();
+
+// ── Sync state: evitar bucles de escritura ──
+let _fbSaving = false;
+
+// ── Escucha cambios en tiempo real desde Firebase ──
+function initFirebaseListeners() {
+  db.ref('viajes').on('value', snap => {
+    if (_fbSaving) return;
+    const val = snap.val();
+    if (val && val.periods) {
+      S = val;
+      curId = S.cur;
+      renderAll();
+    }
+  });
+  db.ref('recorridos').on('value', snap => {
+    if (_fbSaving) return;
+    const val = snap.val();
+    if (val && val.choferes) {
+      recState = val;
+      if (document.getElementById('app-recorridos').classList.contains('active')) renderRecorridos();
+      if (document.getElementById('app-liquidacion').classList.contains('active')) renderLiquidacion();
+    }
+  });
+  db.ref('cronograma').on('value', snap => {
+    if (_fbSaving) return;
+    const val = snap.val();
+    if (val) {
+      cronState = val;
+      if (document.getElementById('app-cronograma').classList.contains('active')) renderCronograma();
+    }
+  });
+}
+
+// ══════════════════════════════════════════════════════════
 // VIAJES / PERÍODOS
 // ══════════════════════════════════════════════════════════
 const SK = 'cnt_v5';
@@ -365,7 +416,11 @@ function loadS(){try{const s=JSON.parse(localStorage.getItem(SK));if(s&&s.period
 function initS(){const id='p'+Date.now();const now=new Date();return{cur:id,periods:[{id,name:monthName(now),created:today(),closed:null,rows:[],t:{km:497.22,esp:3808.60,auto:21698.58,combi:43397.16}}]};}
 function monthName(d){return d.toLocaleString('es-AR',{month:'long',year:'numeric'}).toUpperCase();}
 function today(){return new Date().toISOString().split('T')[0];}
-function save(){localStorage.setItem(SK,JSON.stringify(S));}
+function save(){
+  localStorage.setItem(SK,JSON.stringify(S));
+  _fbSaving=true;
+  db.ref('viajes').set(S).finally(()=>{_fbSaving=false;});
+}
 function curP(){return S.periods.find(p=>p.id===curId);}
 
 function nuevoPeriodo(){const prev=curP();const t=prev?{...prev.t}:{km:497.22,esp:3808.60,auto:21698.58,combi:43397.16};const id='p'+Date.now();S.periods.unshift({id,name:monthName(new Date()),created:today(),closed:null,rows:[],t});S.cur=id;curId=id;save();renderAll();toast('Nuevo período creado ✓','ok');}
@@ -449,7 +504,11 @@ let currentDayStr=null;
 function loadRecState(){try{const s=JSON.parse(localStorage.getItem(SK_R));if(s&&s.choferes)return s;}catch(e){}return initRecState();}
 function initRecState(){const now=new Date();return{choferes:['GONZALEZ ALICIO','REINA SEBASTIAN','BARRERA FERNANDO','BOLADO JOSE'],valorHora:5805.20,viewYear:now.getFullYear(),viewMonth:now.getMonth(),days:{},templates:initTemplates()};}
 function initTemplates(){return{lunes:{choferes:{}},martes:{choferes:{}},miercoles:{choferes:{}},jueves:{choferes:{}},viernes:{choferes:{}},sabado:{choferes:{}},domingo:{choferes:{}}};}
-function saveRec(){localStorage.setItem(SK_R,JSON.stringify(recState));}
+function saveRec(){
+  localStorage.setItem(SK_R,JSON.stringify(recState));
+  _fbSaving=true;
+  db.ref('recorridos').set(recState).finally(()=>{_fbSaving=false;});
+}
 
 function getDayName(dateStr){const d=new Date(dateStr+'T12:00:00');return['domingo','lunes','martes','miercoles','jueves','viernes','sabado'][d.getDay()];}
 function getDayData(dateStr){
@@ -868,7 +927,11 @@ const SK_CRON='cnt_cronograma_v1';
 let cronState=loadCronState();
 
 function loadCronState(){try{const s=JSON.parse(localStorage.getItem(SK_CRON));if(s)return s;}catch(e){}return{tipo:'chofer',viewYear:new Date().getFullYear(),viewMonth:new Date().getMonth(),data:{}};}
-function saveCronLS(){localStorage.setItem(SK_CRON,JSON.stringify(cronState));}
+function saveCronLS(){
+  localStorage.setItem(SK_CRON,JSON.stringify(cronState));
+  _fbSaving=true;
+  db.ref('cronograma').set(cronState).finally(()=>{_fbSaving=false;});
+}
 
 const ESTADOS_CRON=['BLANK','T','F','VAC','G','LIC'];
 const CRON_CSS={T:'estado-T',F:'estado-F',G:'estado-G',VAC:'estado-VAC',LIC:'estado-LIC',BLANK:'estado-BLANK',DIU:'estado-DIU','22':'estado-22','14':'estado-14','06':'estado-06'};
@@ -1147,6 +1210,77 @@ document.querySelectorAll('.modal-ov,.confirm-ov').forEach(el=>el.addEventListen
 // ══════════════════════════════════════════════════════════
 // INIT — precargar datos Excel
 // ══════════════════════════════════════════════════════════
+(function preload(){
+  // Show loading overlay
+  document.body.insertAdjacentHTML('beforeend',`
+    <div id="fb-loading" style="position:fixed;inset:0;background:#1a1a1a;z-index:9999;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:16px">
+      <img src="${document.querySelector('.brand-logo')?.src||''}" style="height:60px;filter:drop-shadow(0 0 8px rgba(255,255,255,.3))">
+      <div style="font-family:'Barlow Condensed',sans-serif;font-size:22px;font-weight:800;color:#fff;letter-spacing:2px">CARGANDO DATOS...</div>
+      <div style="width:200px;height:4px;background:#333;border-radius:4px;overflow:hidden">
+        <div id="fb-progress" style="height:100%;background:#c0392b;width:0%;transition:width .3s;border-radius:4px"></div>
+      </div>
+      <div id="fb-loading-msg" style="font-size:12px;color:#6b7280">Conectando con Firebase...</div>
+    </div>`);
+
+  let loaded = {viajes:false, recorridos:false, cronograma:false};
+  function checkAllLoaded(){
+    const p=document.getElementById('fb-progress');
+    const done=Object.values(loaded).filter(Boolean).length;
+    if(p)p.style.width=(done/3*100)+'%';
+    if(done<3)return;
+    setTimeout(()=>{
+      const overlay=document.getElementById('fb-loading');
+      if(overlay)overlay.remove();
+      initFirebaseListeners();
+    },300);
+  }
+
+  // Try loading from Firebase first
+  const fbStatus=document.getElementById('fb-status');
+
+  db.ref('viajes').once('value').then(snap=>{
+    const msg=document.getElementById('fb-loading-msg');
+    if(msg)msg.textContent='Cargando planilla de viajes...';
+    const val=snap.val();
+    if(val&&val.periods){S=val;curId=S.cur;localStorage.setItem(SK,JSON.stringify(S));}
+    loaded.viajes=true;checkAllLoaded();
+  }).catch(()=>{loaded.viajes=true;checkAllLoaded();});
+
+  db.ref('recorridos').once('value').then(snap=>{
+    const msg=document.getElementById('fb-loading-msg');
+    if(msg)msg.textContent='Cargando recorridos...';
+    const val=snap.val();
+    if(val&&val.choferes){recState=val;localStorage.setItem(SK_R,JSON.stringify(recState));}
+    loaded.recorridos=true;checkAllLoaded();
+  }).catch(()=>{loaded.recorridos=true;checkAllLoaded();});
+
+  db.ref('cronograma').once('value').then(snap=>{
+    const msg=document.getElementById('fb-loading-msg');
+    if(msg)msg.textContent='Cargando cronograma...';
+    const val=snap.val();
+    if(val){cronState=val;localStorage.setItem(SK_CRON,JSON.stringify(cronState));}
+    loaded.cronograma=true;checkAllLoaded();
+  }).catch(()=>{loaded.cronograma=true;checkAllLoaded();});
+
+  // Firebase connection status
+  db.ref('.info/connected').on('value',snap=>{
+    const el=document.getElementById('fb-status');
+    if(!el)return;
+    if(snap.val()){
+      el.textContent='🟢 Sincronizado';
+      el.style.background='rgba(22,163,74,.2)';
+      el.style.color='#4ade80';
+    } else {
+      el.textContent='🔴 Sin conexión';
+      el.style.background='rgba(220,38,38,.2)';
+      el.style.color='#f87171';
+    }
+  });
+
+  // Original preload below — only runs once Firebase data is loaded
+  return; // Skip the old preload, Firebase load handles it
+})();
+
 (function preload(){
   // VERSION KEY: cambiar este valor fuerza recarga de datos aunque ya haya localStorage
   const DATA_VERSION = 'v_20260318_52rows';
