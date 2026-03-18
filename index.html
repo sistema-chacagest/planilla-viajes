@@ -452,7 +452,21 @@ function initTemplates(){return{lunes:{choferes:{}},martes:{choferes:{}},miercol
 function saveRec(){localStorage.setItem(SK_R,JSON.stringify(recState));}
 
 function getDayName(dateStr){const d=new Date(dateStr+'T12:00:00');return['domingo','lunes','martes','miercoles','jueves','viernes','sabado'][d.getDay()];}
-function getDayData(dateStr){if(!recState.days[dateStr]){const tpl=recState.templates[getDayName(dateStr)];recState.days[dateStr]=JSON.parse(JSON.stringify(tpl||{choferes:{}}));}return recState.days[dateStr];}
+function getDayData(dateStr){
+  if(!recState.days[dateStr]){const tpl=recState.templates[getDayName(dateStr)];recState.days[dateStr]=JSON.parse(JSON.stringify(tpl||{choferes:{},_order:[]}));}
+  if(!recState.days[dateStr]._order)recState.days[dateStr]._order=Object.keys(recState.days[dateStr].choferes);
+  return recState.days[dateStr];
+}
+function getChoferes(dateStr){
+  const day=recState.days[dateStr];
+  if(!day)return[];
+  if(!day._order)day._order=Object.keys(day.choferes||{});
+  // Keep only choferes that still exist in the object
+  day._order=day._order.filter(c=>day.choferes&&day.choferes[c]!==undefined);
+  // Add any that exist in object but not in order (backwards compat)
+  Object.keys(day.choferes||{}).forEach(c=>{if(!day._order.includes(c))day._order.push(c);});
+  return day._order;
+}
 function parseHours(desde,hasta){const toMin=t=>{const[h,m]=t.split(':').map(Number);return h*60+(m||0);};let d=toMin(desde),h=toMin(hasta);if(h<=d)h+=24*60;return Math.round((h-d)*10/60)/10;}
 function getAllChoferes(){const set=new Set(recState.choferes);Object.values(recState.days).forEach(day=>{Object.keys(day.choferes).forEach(c=>set.add(c));});return[...set];}
 
@@ -490,7 +504,7 @@ function renderRecorridos(){
     const isHoy=ds===tod;
     const isCopySrc=ds===recCopySource;
     const hdrCls=dn==='domingo'?'domingo':dn==='sabado'?'sabado':dn==='viernes'?'viernes':'';
-    const chs=Object.keys(dd.choferes);
+    const chs=getChoferes(ds);
     const hasTurnos=chs.length>0;
     const clickAction=recCopySource&&!isCopySrc?`pegarRecorrido('${ds}')`:`openDayModal('${ds}')`;
     let cardStyle='';
@@ -568,7 +582,7 @@ function renderDayModal(){
   const DN=['Domingo','Lunes','Martes','Miércoles','Jueves','Viernes','Sábado'];
   const MN=['Enero','Febrero','Marzo','Abril','Mayo','Junio','Julio','Agosto','Septiembre','Octubre','Noviembre','Diciembre'];
   const dayName=DN[d.getDay()],dayNum=d.getDate(),mName=MN[d.getMonth()];
-  const chs=Object.keys(day.choferes);
+  const chs=getChoferes(dateStr);
   const logoEl=document.querySelector('.brand-logo');
   const logoSrc=logoEl?logoEl.src:'';
   const franco=day.franco||null;
@@ -662,10 +676,14 @@ function addChoferToDay2(){
   const chofer=prompt('Nombre del chofer:'+(all.length?'\n'+all.join('\n'):''),'');
   if(!chofer||!chofer.trim())return;
   const nombre=chofer.trim().toUpperCase();
-  if(!recState.days[currentDayStr])recState.days[currentDayStr]={choferes:{}};
-  if(!recState.days[currentDayStr].choferes[nombre])recState.days[currentDayStr].choferes[nombre]=[];
+  if(!recState.days[currentDayStr])recState.days[currentDayStr]={choferes:{},_order:[]};
+  if(!recState.days[currentDayStr].choferes[nombre]){
+    recState.days[currentDayStr].choferes[nombre]=[];
+    if(!recState.days[currentDayStr]._order)recState.days[currentDayStr]._order=[];
+    if(!recState.days[currentDayStr]._order.includes(nombre))
+      recState.days[currentDayStr]._order.push(nombre);
+  }
   saveRec();renderDayModal();
-  // Actualiza solo el card del día actual sin reordenar todo el calendario
   actualizarCardDia(currentDayStr);
 }
 
@@ -681,6 +699,8 @@ function addTurnoModal(chofer){
 function removeChoferModal(chofer){
   if(!confirm('\u00bfQuitar a '+chofer+' de este día?'))return;
   delete recState.days[currentDayStr].choferes[chofer];
+  const day=recState.days[currentDayStr];
+  if(day._order)day._order=day._order.filter(c=>c!==chofer);
   saveRec();renderDayModal();
   actualizarCardDia(currentDayStr);
 }
@@ -693,6 +713,8 @@ function renombrarChofer(choferViejo){
   const turnos=day.choferes[choferViejo];
   delete day.choferes[choferViejo];
   day.choferes[n]=turnos;
+  // Preserve position in order array
+  if(day._order){const i=day._order.indexOf(choferViejo);if(i>=0)day._order[i]=n;}
   saveRec();renderDayModal();
   actualizarCardDia(currentDayStr);
   toast('Chofer renombrado a '+n+' \u2713','ok');
@@ -756,8 +778,8 @@ function actualizarCardDia(dateStr){
   const year=recState.viewYear,month=recState.viewMonth;
   const prefix=`${year}-${String(month+1).padStart(2,'0')}-`;
   if(!dateStr.startsWith(prefix))return; // día de otro mes, nada que hacer
-  const dd=recState.days[dateStr]||{choferes:{}};
-  const chs=Object.keys(dd.choferes);
+  const dd=recState.days[dateStr]||{choferes:{},_order:[]};
+  const chs=getChoferes(dateStr);
   const hasTurnos=chs.length>0;
   // Find all day cards and update only the matching one
   const allCards=document.querySelectorAll('.rec-day-card');
