@@ -904,11 +904,16 @@ document.querySelectorAll('.modal-ov,.confirm-ov').forEach(el=>el.addEventListen
 // INIT — precargar datos Excel
 // ══════════════════════════════════════════════════════════
 (function preload(){
+  // VERSION KEY: cambiar este valor fuerza recarga de datos aunque ya haya localStorage
+  const DATA_VERSION = 'v_20260318_52rows';
   const p=curP();
-  if(!p||p.rows.length>0){renderAll();return;}
   const tarifas={km:497.22,esp:3808.60,auto:21698.58,combi:43397.16,planta:0};
+  // Si ya se cargó esta versión exacta de datos, no pisar
+  if(p && p._dataVersion === DATA_VERSION){renderAll();return;}
+  // Primera vez o versión diferente: recargar con datos completos del Excel
   p.t=tarifas;
   p.name='FEBRERO - MARZO 2026';
+  p._dataVersion = DATA_VERSION;
   const raw=[
     {fecha:'2026-02-25',chofer:'BOLADO',horario:'18:00',detalle:'RETIRA VENCHE DANIEL',costoExt:'',tipo:'AUTO',km:'',hbEsp:''},
     {fecha:'2026-02-25',chofer:'BOLADO',horario:'20:00',detalle:'RETIRA FIGGINI CRISTIAN Y TORO HECTOR',costoExt:'5646.73',tipo:'AUTO',km:'',hbEsp:''},
@@ -963,7 +968,7 @@ document.querySelectorAll('.modal-ov,.confirm-ov').forEach(el=>el.addEventListen
     {fecha:'2026-03-14',chofer:'BARRERA',horario:'16:00',detalle:'RETIRA ROZUADONSQUEY CLARA, HAILANT SEBASTIAN Y ARGUELLO',costoExt:'11293.46',tipo:'AUTO',km:'',hbEsp:''},
     {fecha:'2026-03-14',chofer:'BARRERA',horario:'20:00',detalle:'RETIRA MACHELLO AGUSTIN, FERREYRA SAMUEL Y PALOMERO BAUTISTA',costoExt:'11293.46',tipo:'AUTO',km:'',hbEsp:''}
   ];
-  raw.forEach(r=>{const row=newRow();Object.assign(row,r);calcRow(row,tarifas);p.rows.push(row);});
+  p.rows=[];  raw.forEach(r=>{const row=newRow();Object.assign(row,r);calcRow(row,tarifas);p.rows.push(row);});
   save();renderAll();
 })();
 </script>
