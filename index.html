@@ -155,6 +155,7 @@ tfoot tr td{background:#f7f8fa;font-weight:700;border-top:2px solid var(--border
 .estado-VAC{background:#ede9fe;color:#5b21b6}
 .estado-LIC{background:#fee2e2;color:#991b1b}
 .estado-BLANK{background:#fff;color:#d1d5db}
+.estado-DIU{background:#e0f2fe;color:#075985}
 .no-print{display:flex}
 
 /* LIQUIDACION */
@@ -303,6 +304,7 @@ tfoot tr td{background:#f7f8fa;font-weight:700;border-top:2px solid var(--border
     <span style="background:#dbeafe;color:#1e40af;padding:3px 10px;border-radius:12px;font-size:11px;font-weight:700">G — Guardia</span>
     <span style="background:#ede9fe;color:#5b21b6;padding:3px 10px;border-radius:12px;font-size:11px;font-weight:700">VAC — Vacaciones</span>
     <span style="background:#fee2e2;color:#991b1b;padding:3px 10px;border-radius:12px;font-size:11px;font-weight:700">LIC — Licencia</span>
+    <span style="background:#e0f2fe;color:#075985;padding:3px 10px;border-radius:12px;font-size:11px;font-weight:700">DIU — Diurno</span>
   </div>
   <div style="overflow:auto;max-height:70vh;background:#fff;border-radius:12px;border:1.5px solid var(--border)">
     <table class="cron-table" id="cron-table" style="min-width:900px"></table>
@@ -671,14 +673,14 @@ function editTurno(chofer,idx){
   const hasta=prompt('Hora HASTA:',t.hasta);if(hasta===null)return;
   const detalle=prompt('Detalle:',t.detalle);if(detalle===null)return;
   recState.days[currentDayStr].choferes[chofer][idx]={desde:desde||t.desde,hasta:hasta||t.hasta,detalle:detalle||t.detalle};
-  saveRec();renderDayModal();renderRecorridos();
+  saveRec();renderDayModal();
   toast('Turno actualizado ✓','ok');
 }
 
 function delTurno(chofer,idx){
   if(!confirm('¿Eliminar este turno?'))return;
   recState.days[currentDayStr].choferes[chofer].splice(idx,1);
-  saveRec();renderDayModal();renderRecorridos();
+  saveRec();renderDayModal();
   toast('Turno eliminado','ok');
 }
 
@@ -724,22 +726,6 @@ function renombrarChofer(choferViejo){
   toast('Chofer renombrado a '+n+' ✓','ok');
 }
 
-function editTurno(chofer,idx){
-  const t=recState.days[currentDayStr].choferes[chofer][idx];
-  const desde=prompt('Hora DESDE:',t.desde);if(desde===null)return;
-  const hasta=prompt('Hora HASTA:',t.hasta);if(hasta===null)return;
-  const detalle=prompt('Detalle:',t.detalle);if(detalle===null)return;
-  recState.days[currentDayStr].choferes[chofer][idx]={desde:desde||t.desde,hasta:hasta||t.hasta,detalle:detalle||t.detalle};
-  saveRec();renderDayModal();renderRecorridos();
-  toast('Turno actualizado ✓','ok');
-}
-
-function delTurno(chofer,idx){
-  if(!confirm('¿Eliminar este turno?'))return;
-  recState.days[currentDayStr].choferes[chofer].splice(idx,1);
-  saveRec();renderDayModal();renderRecorridos();
-  toast('Turno eliminado','ok');
-}
 
 function guardarFranco(){
   const chofer=document.getElementById('francoChoferSel').value;
@@ -828,7 +814,7 @@ function loadCronState(){try{const s=JSON.parse(localStorage.getItem(SK_CRON));i
 function saveCronLS(){localStorage.setItem(SK_CRON,JSON.stringify(cronState));}
 
 const ESTADOS_CRON=['BLANK','T','F','VAC','G','LIC'];
-const CRON_CSS={T:'estado-T',F:'estado-F',G:'estado-G',VAC:'estado-VAC',LIC:'estado-LIC',BLANK:'estado-BLANK'};
+const CRON_CSS={T:'estado-T',F:'estado-F',G:'estado-G',VAC:'estado-VAC',LIC:'estado-LIC',BLANK:'estado-BLANK',DIU:'estado-DIU'};
 
 function cronKey(tipo,y,m){return `${tipo}_${y}_${m}`;}
 function getCronData(){const k=cronKey(cronState.tipo,cronState.viewYear,cronState.viewMonth);if(!cronState.data[k])cronState.data[k]={};return cronState.data[k];}
@@ -865,7 +851,8 @@ function renderCronograma(){
     const label=DAYNAMES[dw];
     thead+=`<th${cls} style="font-size:9px;min-width:36px"><div>${label}</div><div>${d}</div></th>`;
   }
-  thead+=`<th style="min-width:28px;background:#374151">T</th><th style="min-width:28px;background:#374151">F</th><th style="min-width:28px;background:#374151">VAC</th></tr></thead>`;
+  const thExtra=cronState.tipo==='personal'?`<th style="min-width:28px;background:#075985">DIU</th>`:`<th style="min-width:28px;background:#374151">T</th>`;
+  thead+=thExtra+`<th style="min-width:28px;background:#374151">F</th><th style="min-width:28px;background:#374151">VAC</th></tr></thead>`;
 
   // Build body
   let tbody=`<tbody>`;
@@ -874,15 +861,17 @@ function renderCronograma(){
   } else {
     personas.forEach(persona=>{
       if(!data[persona])data[persona]={};
-      let cT=0,cF=0,cV=0;
-      for(let d=1;d<=dim;d++){const e=data[persona][d]||'BLANK';if(e==='T')cT++;if(e==='F')cF++;if(e==='VAC')cV++;}
+      let cT=0,cF=0,cV=0,cD=0;
+      for(let d=1;d<=dim;d++){const e=data[persona][d]||'BLANK';if(e==='T')cT++;if(e==='F')cF++;if(e==='VAC')cV++;if(e==='DIU')cD++;}
       tbody+=`<tr><td class="name-cell">${persona}</td>`;
       for(let d=1;d<=dim;d++){
         const est=data[persona][d]||'BLANK';
         const lbl=est==='BLANK'?'-':est;
         tbody+=`<td class="${CRON_CSS[est]||'estado-BLANK'}" onclick="ciclarCron('${persona}',${d})" title="${est}">${lbl}</td>`;
       }
-      tbody+=`<td class="sum-cell" style="color:#065f46">${cT}</td><td class="sum-cell" style="color:#92400e">${cF}</td><td class="sum-cell" style="color:#5b21b6">${cV}</td></tr>`;
+      const diuCell=cronState.tipo==='personal'?`<td class="sum-cell" style="color:#075985">${cD}</td>`:'';
+      const tCell=cronState.tipo==='personal'?'':`<td class="sum-cell" style="color:#065f46">${cT}</td>`;
+      tbody+=tCell+`<td class="sum-cell" style="color:#92400e">${cF}</td><td class="sum-cell" style="color:#5b21b6">${cV}</td>`+diuCell+`</tr>`;
     });
   }
   tbody+=`</tbody>`;
@@ -902,10 +891,13 @@ function ciclarCron(persona,dia){
   const data=getCronData();
   if(!data[persona])data[persona]={};
   const actual=data[persona][dia]||'BLANK';
-  const idx=ESTADOS_CRON.indexOf(actual);
-  data[persona][dia]=ESTADOS_CRON[(idx+1)%ESTADOS_CRON.length];
+  // Ciclo diferente según tipo de cronograma
+  const ciclo = cronState.tipo==='personal'
+    ? ['BLANK','F','VAC','DIU']          // Personal COFCO: sin T, agrega DIU
+    : ['BLANK','T','F','VAC','G','LIC']; // Choferes: ciclo completo
+  const idx=ciclo.indexOf(actual);
+  data[persona][dia]=ciclo[(idx+1)%ciclo.length];
   saveCronLS();
-  // Update just that cell for performance
   renderCronograma();
 }
 
