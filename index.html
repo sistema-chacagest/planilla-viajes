@@ -155,6 +155,7 @@ tfoot tr td{background:#f7f8fa;font-weight:700;border-top:2px solid var(--border
 .estado-VAC{background:#ede9fe;color:#5b21b6}
 .estado-LIC{background:#fee2e2;color:#991b1b}
 .estado-BLANK{background:#fff;color:#d1d5db}
+.no-print{display:flex}
 
 /* LIQUIDACION */
 .liq-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:14px;margin-bottom:20px}
@@ -562,9 +563,10 @@ function renderDayModal(){
   const chs=Object.keys(day.choferes);
   const logoEl=document.querySelector('.brand-logo');
   const logoSrc=logoEl?logoEl.src:'';
-  const franco=day.franco||null; // {chofer, horas}
+  const franco=day.franco||null;
+  const todosChoferes=recState.choferes.length?recState.choferes:getAllChoferes();
 
-  // ── Tarjeta imprimible ──────────────────────────────────
+  // ── Tarjeta principal — UNA sola vista, con botones inline ──
   let card=`<div id="dayPrintCard" style="background:#fff;font-family:Arial,sans-serif;width:100%;border:2px solid #222">
     <div style="display:flex;align-items:center;justify-content:space-between;padding:10px 16px;border-bottom:3px solid #c0392b">
       ${logoSrc?`<img src="${logoSrc}" style="height:44px" alt="Logo" crossorigin="anonymous">`:`<div style="font-family:Arial;font-size:13px;font-weight:900">CNT SRL</div>`}
@@ -575,106 +577,75 @@ function renderDayModal(){
   if(!chs.length && !franco){
     card+=`<div style="padding:28px;text-align:center;color:#9ca3af;font-size:13px">Sin turnos cargados.</div>`;
   } else {
-    // Choferes con turnos — todos en rojo, fecha solo en el primero
     chs.forEach((chofer,ci)=>{
       const turnos=day.choferes[chofer]||[];
-      card+=`<div><div style="background:#c0392b;color:#fff;padding:6px 16px;display:flex;justify-content:space-between;font-size:14px;font-weight:800;letter-spacing:1px">
-        <span>${ci===0?dayName.toUpperCase()+' '+dayNum:''}</span>
-        <span>${chofer.toUpperCase()}</span>
-      </div><table style="width:100%;border-collapse:collapse">`;
-      turnos.forEach(t=>{
+      // Encabezado chofer: rojo, fecha solo en primero, botones renombrar/quitar/+turno
+      card+=`<div>
+        <div style="background:#c0392b;color:#fff;padding:6px 16px;display:flex;justify-content:space-between;align-items:center;font-size:14px;font-weight:800;letter-spacing:1px">
+          <span>${ci===0?dayName.toUpperCase()+' '+dayNum:''}</span>
+          <span style="flex:1;text-align:center">${chofer.toUpperCase()}</span>
+          <span class="no-print" style="display:flex;gap:4px">
+            <button onclick="renombrarChofer('${chofer}')" style="background:rgba(255,255,255,.2);border:none;color:#fff;border-radius:4px;padding:2px 7px;cursor:pointer;font-size:11px;font-weight:700">✏ Renombrar</button>
+            <button onclick="addTurnoModal('${chofer}')" style="background:rgba(255,255,255,.2);border:none;color:#fff;border-radius:4px;padding:2px 7px;cursor:pointer;font-size:11px;font-weight:700">+ Turno</button>
+            <button onclick="removeChoferModal('${chofer}')" style="background:rgba(0,0,0,.25);border:none;color:#fff;border-radius:4px;padding:2px 7px;cursor:pointer;font-size:11px;font-weight:700">✕</button>
+          </span>
+        </div>
+        <table style="width:100%;border-collapse:collapse">`;
+      if(!turnos.length){
+        card+=`<tr><td colspan="4" style="padding:8px 16px;font-size:12px;color:#9ca3af;font-style:italic">Sin turnos</td></tr>`;
+      }
+      turnos.forEach((t,ti)=>{
         card+=`<tr style="border-bottom:1px solid #e5e7eb">
-          <td style="padding:6px 16px;font-family:monospace;font-weight:700;font-size:13px;width:110px">${t.desde}</td>
-          <td style="padding:6px 4px;font-family:monospace;font-weight:700;font-size:13px;width:110px">${t.hasta}</td>
+          <td style="padding:6px 16px;font-family:monospace;font-weight:700;font-size:13px;width:90px">${t.desde}</td>
+          <td style="padding:6px 4px;font-family:monospace;font-weight:700;font-size:13px;width:90px">${t.hasta}</td>
           <td style="padding:6px 16px;font-size:13px;font-style:italic">${t.detalle}</td>
+          <td class="no-print" style="padding:4px 10px;text-align:right;white-space:nowrap">
+            <button onclick="editTurno('${chofer}',${ti})" style="background:#f0f2f5;border:1px solid #dde1e8;border-radius:4px;padding:2px 8px;cursor:pointer;font-size:11px;margin-right:3px">✏</button>
+            <button onclick="delTurno('${chofer}',${ti})" style="background:#fee2e2;border:1px solid #fca5a5;border-radius:4px;padding:2px 8px;cursor:pointer;font-size:11px;color:#dc2626">🗑</button>
+          </td>
         </tr>`;
       });
       card+=`</table></div>`;
     });
     // Franco en tarjeta
     if(franco){
-      card+=`<div style="background:#d97706;color:#fff;padding:6px 16px;display:flex;justify-content:space-between;font-size:14px;font-weight:800;letter-spacing:1px">
-        <span>FRANCO</span><span>${franco.chofer.toUpperCase()} · ${franco.horas} HS</span>
+      card+=`<div style="background:#d97706;color:#fff;padding:6px 16px;display:flex;justify-content:space-between;align-items:center;font-size:14px;font-weight:800;letter-spacing:1px">
+        <span>FRANCO — ${franco.chofer.toUpperCase()} · ${franco.horas} HS</span>
+        <span class="no-print" style="display:flex;gap:4px">
+          <button onclick="editFranco()" style="background:rgba(255,255,255,.2);border:none;color:#fff;border-radius:4px;padding:2px 7px;cursor:pointer;font-size:11px;font-weight:700">✏</button>
+          <button onclick="delFranco()" style="background:rgba(0,0,0,.25);border:none;color:#fff;border-radius:4px;padding:2px 7px;cursor:pointer;font-size:11px;font-weight:700">✕</button>
+        </span>
       </div>`;
     }
   }
   card+=`</div>`;
 
-  // ── Sección edición de choferes/turnos ──────────────────
-  let editSection='';
-  chs.forEach((chofer,ci)=>{
-    const turnos=day.choferes[chofer]||[];
-    editSection+=`<div style="background:#f9fafb;border:1.5px solid var(--border);border-radius:8px;padding:10px 12px;margin-bottom:8px">
-      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:6px">
-        <span style="font-family:var(--font-display);font-size:15px;font-weight:800;color:#c0392b">${chofer}</span>
-        <div style="display:flex;gap:5px">
-          <button class="btn btn-outline btn-sm" onclick="renombrarChofer('${chofer}')">✏ Renombrar</button>
-          <button class="btn btn-primary btn-sm" onclick="addTurnoModal('${chofer}')">+ Turno</button>
-          <button class="btn btn-danger btn-sm" onclick="removeChoferModal('${chofer}')">✕ Quitar</button>
-        </div>
-      </div>`;
-    if(turnos.length){
-      editSection+=`<table style="width:100%;border-collapse:collapse;font-size:12px">`;
-      turnos.forEach((t,ti)=>{
-        editSection+=`<tr style="border-bottom:1px solid #f0f2f5">
-          <td style="padding:3px 6px;font-family:var(--font-mono);font-weight:700;width:80px">${t.desde}</td>
-          <td style="padding:3px 6px;font-family:var(--font-mono);font-weight:700;width:80px">${t.hasta}</td>
-          <td style="padding:3px 6px;font-style:italic;color:#374151">${t.detalle}</td>
-          <td style="padding:3px 6px;text-align:right;white-space:nowrap">
-            <button class="btn btn-outline btn-sm" style="padding:2px 7px;font-size:11px" onclick="editTurno('${chofer}',${ti})">✏</button>
-            <button class="btn btn-danger btn-sm" style="padding:2px 7px;font-size:11px" onclick="delTurno('${chofer}',${ti})">🗑</button>
-          </td>
-        </tr>`;
-      });
-      editSection+=`</table>`;
-    } else {
-      editSection+=`<div style="font-size:11px;color:#9ca3af;padding:4px">Sin turnos — usá + Turno para agregar.</div>`;
-    }
-    editSection+=`</div>`;
-  });
-
-  // ── Casilla FRANCO ──────────────────────────────────────
-  const todosChoferes=recState.choferes.length?recState.choferes:getAllChoferes();
-  const francoSection=`<div style="background:#fef3c7;border:1.5px solid #d97706;border-radius:8px;padding:10px 14px;margin-top:8px">
-    <div style="font-family:var(--font-display);font-size:13px;font-weight:800;color:#92400e;margin-bottom:8px">🟡 FRANCO DEL DÍA</div>
-    ${franco?`
-      <div style="display:flex;align-items:center;gap:10px;flex-wrap:wrap">
-        <span style="font-weight:700;color:#92400e">${franco.chofer} — ${franco.horas} hs</span>
-        <button class="btn btn-sm btn-outline" onclick="editFranco()">✏ Editar</button>
-        <button class="btn btn-sm btn-danger" onclick="delFranco()">✕ Quitar</button>
-      </div>`:`
-      <div style="display:flex;gap:8px;align-items:center;flex-wrap:wrap">
-        <select id="francoChoferSel" class="ci-sel" style="border:1.5px solid #d97706;border-radius:6px;padding:5px 8px;min-width:160px">
-          <option value="">— Elegir chofer —</option>
-          ${todosChoferes.map(c=>`<option value="${c}">${c}</option>`).join('')}
-        </select>
-        <input id="francoHorasInput" type="number" value="8" min="1" max="24" step="0.5" style="border:1.5px solid #d97706;border-radius:6px;padding:5px 8px;width:70px;font-family:var(--font-mono);font-weight:700" title="Horas a sumar en liquidación">
-        <span style="font-size:11px;color:#92400e">hs</span>
-        <button class="btn btn-sm btn-yellow" onclick="guardarFranco()">✓ Guardar Franco</button>
-      </div>`}
-  </div>`;
+  // Casilla FRANCO (solo si no hay franco aún)
+  const francoAdd=!franco?`<div style="background:#fef3c7;border:1.5px solid #d97706;border-radius:8px;padding:10px 14px;margin-top:10px;display:flex;gap:8px;align-items:center;flex-wrap:wrap">
+    <span style="font-family:var(--font-display);font-size:13px;font-weight:800;color:#92400e">🟡 FRANCO:</span>
+    <select id="francoChoferSel" style="border:1.5px solid #d97706;border-radius:6px;padding:5px 8px;min-width:150px;font-size:13px">
+      <option value="">— Elegir chofer —</option>
+      ${todosChoferes.map(c=>`<option value="${c}">${c}</option>`).join('')}
+    </select>
+    <input id="francoHorasInput" type="number" value="8" min="1" max="24" step="0.5" style="border:1.5px solid #d97706;border-radius:6px;padding:5px 8px;width:65px;font-family:var(--font-mono);font-weight:700;font-size:13px">
+    <span style="font-size:12px;color:#92400e">hs</span>
+    <button class="btn btn-yellow btn-sm" onclick="guardarFranco()">✓ Guardar</button>
+  </div>`:'';
 
   document.getElementById('dayModalBody').innerHTML=`
     <div style="display:flex;justify-content:space-between;align-items:center;padding:14px 18px;border-bottom:1.5px solid var(--border)">
       <div style="font-family:var(--font-display);font-size:19px;font-weight:800;letter-spacing:1px">${dayName.toUpperCase()} ${dayNum} DE ${mName.toUpperCase()}</div>
       <div style="display:flex;gap:8px;align-items:center">
-        <button class="btn btn-green btn-sm" onclick="downloadDayJPG()">📷 Descargar JPG</button>
-        <button class="btn btn-blue btn-sm" onclick="copiarDiaAnterior('${dateStr}')">📋 Copiar día anterior</button>
-        <button class="btn btn-yellow btn-sm" onclick="closeM('dayModal');iniciarCopia('${dateStr}')">📋 Copiar recorrido</button>
+        <button class="btn btn-primary btn-sm" onclick="addChoferToDay2()">+ Chofer</button>
+        <button class="btn btn-green btn-sm" onclick="downloadDayJPG()">📷 JPG</button>
+        <button class="btn btn-blue btn-sm" onclick="copiarDiaAnterior('${dateStr}')">📋 Día anterior</button>
+        <button class="btn btn-yellow btn-sm" onclick="closeM('dayModal');iniciarCopia('${dateStr}')">📋 Copiar</button>
         <button class="x-btn" onclick="closeM('dayModal')">✕</button>
       </div>
     </div>
-    <div style="padding:14px 18px;display:grid;grid-template-columns:1fr 1fr;gap:16px">
-      <div>
-        <div style="font-size:11px;font-weight:700;color:var(--muted);letter-spacing:1px;margin-bottom:8px;text-transform:uppercase">Vista previa impresión</div>
-        ${card}
-      </div>
-      <div>
-        <div style="font-size:11px;font-weight:700;color:var(--muted);letter-spacing:1px;margin-bottom:8px;text-transform:uppercase">Edición</div>
-        ${editSection}
-        <button class="btn btn-primary btn-sm" style="margin-bottom:8px" onclick="addChoferToDay2()">+ Agregar Chofer</button>
-        ${francoSection}
-      </div>
+    <div style="padding:14px 18px">
+      ${card}
+      ${francoAdd}
     </div>`;
 }
 
@@ -823,7 +794,7 @@ async function downloadDayJPG(){
   if(!card){toast('Error al generar imagen','err');return;}
   try{
     toast('Generando JPG...','');
-    const canvas=await html2canvas(card,{scale:2,useCORS:true,backgroundColor:'#ffffff',logging:false});
+    document.querySelectorAll('.no-print').forEach(el=>el.style.display='none');const canvas=await html2canvas(card,{scale:2,useCORS:true,backgroundColor:'#ffffff',logging:false});document.querySelectorAll('.no-print').forEach(el=>el.style.display='');
     const link=document.createElement('a');
     const d=new Date(currentDayStr+'T12:00:00');
     const dn=['domingo','lunes','martes','miercoles','jueves','viernes','sabado'][d.getDay()];
