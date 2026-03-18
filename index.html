@@ -156,6 +156,9 @@ tfoot tr td{background:#f7f8fa;font-weight:700;border-top:2px solid var(--border
 .estado-LIC{background:#fee2e2;color:#991b1b}
 .estado-BLANK{background:#fff;color:#d1d5db}
 .estado-DIU{background:#e0f2fe;color:#075985}
+.estado-22{background:#1a1a1a;color:#fff}
+.estado-14{background:#7c3aed;color:#fff}
+.estado-06{background:#1d4ed8;color:#fff}
 .no-print{display:flex}
 
 /* LIQUIDACION */
@@ -305,6 +308,9 @@ tfoot tr td{background:#f7f8fa;font-weight:700;border-top:2px solid var(--border
     <span style="background:#ede9fe;color:#5b21b6;padding:3px 10px;border-radius:12px;font-size:11px;font-weight:700">VAC — Vacaciones</span>
     <span style="background:#fee2e2;color:#991b1b;padding:3px 10px;border-radius:12px;font-size:11px;font-weight:700">LIC — Licencia</span>
     <span style="background:#e0f2fe;color:#075985;padding:3px 10px;border-radius:12px;font-size:11px;font-weight:700">DIU — Diurno</span>
+    <span style="background:#1a1a1a;color:#fff;padding:3px 10px;border-radius:12px;font-size:11px;font-weight:700">22 — Turno 22hs</span>
+    <span style="background:#7c3aed;color:#fff;padding:3px 10px;border-radius:12px;font-size:11px;font-weight:700">14 — Turno 14hs</span>
+    <span style="background:#1d4ed8;color:#fff;padding:3px 10px;border-radius:12px;font-size:11px;font-weight:700">06 — Turno 06hs</span>
   </div>
   <div style="overflow:auto;max-height:70vh;background:#fff;border-radius:12px;border:1.5px solid var(--border)">
     <table class="cron-table" id="cron-table" style="min-width:900px"></table>
@@ -651,9 +657,33 @@ function renderDayModal(){
     </div>`;
 }
 
-function addChoferToDay2(){const all=recState.choferes.length?recState.choferes:getAllChoferes();const chofer=prompt('Nombre del chofer:'+(all.length?'\n'+all.join('\n'):''),'');if(!chofer||!chofer.trim())return;const nombre=chofer.trim().toUpperCase();if(!recState.days[currentDayStr])recState.days[currentDayStr]={choferes:{}};if(!recState.days[currentDayStr].choferes[nombre])recState.days[currentDayStr].choferes[nombre]=[];saveRec();renderDayModal();renderRecorridos();}
-function addTurnoModal(chofer){const desde=prompt('Hora DESDE (ej: 20:00):','');if(!desde||!desde.includes(':'))return;const hasta=prompt('Hora HASTA (ej: 23:00):','');if(!hasta||!hasta.includes(':'))return;const detalle=prompt('Detalle:','Recorrido');if(detalle===null)return;recState.days[currentDayStr].choferes[chofer].push({desde,hasta,detalle:detalle||'Recorrido'});saveRec();renderDayModal();renderRecorridos();}
-function removeChoferModal(chofer){if(!confirm('¿Quitar a '+chofer+' de este día?'))return;delete recState.days[currentDayStr].choferes[chofer];saveRec();renderDayModal();renderRecorridos();}
+function addChoferToDay2(){
+  const all=recState.choferes.length?recState.choferes:getAllChoferes();
+  const chofer=prompt('Nombre del chofer:'+(all.length?'\n'+all.join('\n'):''),'');
+  if(!chofer||!chofer.trim())return;
+  const nombre=chofer.trim().toUpperCase();
+  if(!recState.days[currentDayStr])recState.days[currentDayStr]={choferes:{}};
+  if(!recState.days[currentDayStr].choferes[nombre])recState.days[currentDayStr].choferes[nombre]=[];
+  saveRec();renderDayModal();
+  // Actualiza solo el card del día actual sin reordenar todo el calendario
+  actualizarCardDia(currentDayStr);
+}
+
+function addTurnoModal(chofer){
+  const desde=prompt('Hora DESDE (ej: 20:00):','');if(!desde||!desde.includes(':'))return;
+  const hasta=prompt('Hora HASTA (ej: 23:00):','');if(!hasta||!hasta.includes(':'))return;
+  const detalle=prompt('Detalle:','Recorrido');if(detalle===null)return;
+  recState.days[currentDayStr].choferes[chofer].push({desde,hasta,detalle:detalle||'Recorrido'});
+  saveRec();renderDayModal();
+  actualizarCardDia(currentDayStr);
+}
+
+function removeChoferModal(chofer){
+  if(!confirm('\u00bfQuitar a '+chofer+' de este día?'))return;
+  delete recState.days[currentDayStr].choferes[chofer];
+  saveRec();renderDayModal();
+  actualizarCardDia(currentDayStr);
+}
 
 function renombrarChofer(choferViejo){
   const nuevo=prompt('Nuevo nombre para '+choferViejo+':',choferViejo);
@@ -663,8 +693,9 @@ function renombrarChofer(choferViejo){
   const turnos=day.choferes[choferViejo];
   delete day.choferes[choferViejo];
   day.choferes[n]=turnos;
-  saveRec();renderDayModal();renderRecorridos();
-  toast('Chofer renombrado a '+n+' ✓','ok');
+  saveRec();renderDayModal();
+  actualizarCardDia(currentDayStr);
+  toast('Chofer renombrado a '+n+' \u2713','ok');
 }
 
 function editTurno(chofer,idx){
@@ -674,13 +705,15 @@ function editTurno(chofer,idx){
   const detalle=prompt('Detalle:',t.detalle);if(detalle===null)return;
   recState.days[currentDayStr].choferes[chofer][idx]={desde:desde||t.desde,hasta:hasta||t.hasta,detalle:detalle||t.detalle};
   saveRec();renderDayModal();
-  toast('Turno actualizado ✓','ok');
+  actualizarCardDia(currentDayStr);
+  toast('Turno actualizado \u2713','ok');
 }
 
 function delTurno(chofer,idx){
-  if(!confirm('¿Eliminar este turno?'))return;
+  if(!confirm('\u00bfEliminar este turno?'))return;
   recState.days[currentDayStr].choferes[chofer].splice(idx,1);
   saveRec();renderDayModal();
+  actualizarCardDia(currentDayStr);
   toast('Turno eliminado','ok');
 }
 
@@ -690,10 +723,11 @@ function guardarFranco(){
   if(!sel||!inp){toast('Error al guardar franco','err');return;}
   const chofer=sel.value;
   const horas=parseFloat(inp.value)||8;
-  if(!chofer){toast('Elegí un chofer para el franco','err');return;}
+  if(!chofer){toast('Eleg\u00ed un chofer para el franco','err');return;}
   recState.days[currentDayStr].franco={chofer,horas};
-  saveRec();renderDayModal();renderRecorridos();
-  toast('Franco guardado para '+chofer+' ✓','ok');
+  saveRec();renderDayModal();
+  actualizarCardDia(currentDayStr);
+  toast('Franco guardado para '+chofer+' \u2713','ok');
 }
 
 function editFranco(){
@@ -701,59 +735,60 @@ function editFranco(){
   const f=day.franco||{};
   const chofer=prompt('Chofer de franco:',f.chofer||'');
   if(!chofer||!chofer.trim())return;
-  const horas=parseFloat(prompt('Horas a sumar en liquidación:',f.horas||8));
+  const horas=parseFloat(prompt('Horas a sumar en liquidaci\u00f3n:',f.horas||8));
   if(isNaN(horas))return;
   day.franco={chofer:chofer.trim().toUpperCase(),horas};
-  saveRec();renderDayModal();renderRecorridos();
-  toast('Franco actualizado ✓','ok');
+  saveRec();renderDayModal();
+  actualizarCardDia(currentDayStr);
+  toast('Franco actualizado \u2713','ok');
 }
 
 function delFranco(){
-  if(!confirm('¿Quitar el franco de este día?'))return;
+  if(!confirm('\u00bfQuitar el franco de este d\u00eda?'))return;
   delete recState.days[currentDayStr].franco;
-  saveRec();renderDayModal();renderRecorridos();
+  saveRec();renderDayModal();
+  actualizarCardDia(currentDayStr);
   toast('Franco eliminado','ok');
 }
 
-function renombrarChofer(choferViejo){
-  const nuevo=prompt('Nuevo nombre para '+choferViejo+':',choferViejo);
-  if(!nuevo||!nuevo.trim()||nuevo.trim().toUpperCase()===choferViejo)return;
-  const n=nuevo.trim().toUpperCase();
-  const day=recState.days[currentDayStr];
-  day.choferes[n]=day.choferes[choferViejo];
-  delete day.choferes[choferViejo];
-  saveRec();renderDayModal();renderRecorridos();
-  toast('Chofer renombrado a '+n+' ✓','ok');
+// Actualiza solo el card visual de un día en el calendario sin rerenderizar todo
+function actualizarCardDia(dateStr){
+  const year=recState.viewYear,month=recState.viewMonth;
+  const prefix=`${year}-${String(month+1).padStart(2,'0')}-`;
+  if(!dateStr.startsWith(prefix))return; // día de otro mes, nada que hacer
+  const dd=recState.days[dateStr]||{choferes:{}};
+  const chs=Object.keys(dd.choferes);
+  const hasTurnos=chs.length>0;
+  // Find all day cards and update only the matching one
+  const allCards=document.querySelectorAll('.rec-day-card');
+  allCards.forEach(card=>{
+    // Each card has an onclick with the dateStr
+    if(card.getAttribute('onclick')&&card.getAttribute('onclick').includes("'"+dateStr+"'")){
+      // Rebuild just the chofer lines inside the card (everything after the header div)
+      const header=card.querySelector('.rec-day-header');
+      if(!header)return;
+      // Remove old chofer lines
+      while(card.children.length>1)card.removeChild(card.lastChild);
+      // Update badge in header
+      const badge=header.querySelector('span:last-child');
+      if(badge&&!badge.classList.contains('no-print')){
+        badge.textContent=hasTurnos?chs.length+' chof':'+';
+        badge.style.opacity=hasTurnos?'1':'0.6';
+      }
+      // Add chofer lines
+      if(hasTurnos){
+        chs.forEach(c=>{
+          const hs=Math.round((dd.choferes[c]||[]).reduce((s,t)=>s+parseHours(t.desde,t.hasta),0)*10)/10;
+          const row=document.createElement('div');
+          row.style.cssText='padding:3px 8px;font-size:11px;border-bottom:1px solid #f0f2f5;display:flex;justify-content:space-between';
+          row.innerHTML=`<span style="font-weight:600">${c.split(' ')[0]}</span><span style="font-family:monospace;color:#c0392b">${hs}h</span>`;
+          card.appendChild(row);
+        });
+      }
+    }
+  });
 }
 
-
-function guardarFranco(){
-  const chofer=document.getElementById('francoChoferSel').value;
-  const horas=parseFloat(document.getElementById('francoHorasInput').value)||8;
-  if(!chofer){toast('Elegí un chofer para el franco','err');return;}
-  recState.days[currentDayStr].franco={chofer,horas};
-  saveRec();renderDayModal();renderRecorridos();
-  toast('Franco guardado para '+chofer+' ✓','ok');
-}
-
-function editFranco(){
-  const day=recState.days[currentDayStr];
-  const f=day.franco||{};
-  const chofer=prompt('Chofer de franco:',f.chofer||'');
-  if(!chofer||!chofer.trim())return;
-  const horas=parseFloat(prompt('Horas a sumar en liquidación:',f.horas||8));
-  if(isNaN(horas))return;
-  day.franco={chofer:chofer.trim().toUpperCase(),horas};
-  saveRec();renderDayModal();renderRecorridos();
-  toast('Franco actualizado ✓','ok');
-}
-
-function delFranco(){
-  if(!confirm('¿Quitar el franco de este día?'))return;
-  delete recState.days[currentDayStr].franco;
-  saveRec();renderDayModal();renderRecorridos();
-  toast('Franco eliminado','ok');
-}
 
 function copiarDiaAnterior(dateStr){
   const d=new Date(dateStr+'T12:00:00');
@@ -814,7 +849,7 @@ function loadCronState(){try{const s=JSON.parse(localStorage.getItem(SK_CRON));i
 function saveCronLS(){localStorage.setItem(SK_CRON,JSON.stringify(cronState));}
 
 const ESTADOS_CRON=['BLANK','T','F','VAC','G','LIC'];
-const CRON_CSS={T:'estado-T',F:'estado-F',G:'estado-G',VAC:'estado-VAC',LIC:'estado-LIC',BLANK:'estado-BLANK',DIU:'estado-DIU'};
+const CRON_CSS={T:'estado-T',F:'estado-F',G:'estado-G',VAC:'estado-VAC',LIC:'estado-LIC',BLANK:'estado-BLANK',DIU:'estado-DIU','22':'estado-22','14':'estado-14','06':'estado-06'};
 
 function cronKey(tipo,y,m){return `${tipo}_${y}_${m}`;}
 function getCronData(){const k=cronKey(cronState.tipo,cronState.viewYear,cronState.viewMonth);if(!cronState.data[k])cronState.data[k]={};return cronState.data[k];}
@@ -851,8 +886,19 @@ function renderCronograma(){
     const label=DAYNAMES[dw];
     thead+=`<th${cls} style="font-size:9px;min-width:36px"><div>${label}</div><div>${d}</div></th>`;
   }
-  const thExtra=cronState.tipo==='personal'?`<th style="min-width:28px;background:#075985">DIU</th>`:`<th style="min-width:28px;background:#374151">T</th>`;
-  thead+=thExtra+`<th style="min-width:28px;background:#374151">F</th><th style="min-width:28px;background:#374151">VAC</th></tr></thead>`;
+  if(cronState.tipo==='personal'){
+    thead+=`<th style="min-width:28px;background:#1a1a1a" title="Turno 22hs">22</th>`;
+    thead+=`<th style="min-width:28px;background:#7c3aed" title="Turno 14hs">14</th>`;
+    thead+=`<th style="min-width:28px;background:#1d4ed8" title="Turno 06hs">06</th>`;
+    thead+=`<th style="min-width:28px;background:#374151">F</th>`;
+    thead+=`<th style="min-width:28px;background:#374151">VAC</th>`;
+    thead+=`<th style="min-width:28px;background:#075985">DIU</th>`;
+  } else {
+    thead+=`<th style="min-width:28px;background:#374151">T</th>`;
+    thead+=`<th style="min-width:28px;background:#374151">F</th>`;
+    thead+=`<th style="min-width:28px;background:#374151">VAC</th>`;
+  }
+  thead+=`</tr></thead>`;
 
   // Build body
   let tbody=`<tbody>`;
@@ -861,17 +907,27 @@ function renderCronograma(){
   } else {
     personas.forEach(persona=>{
       if(!data[persona])data[persona]={};
-      let cT=0,cF=0,cV=0,cD=0;
-      for(let d=1;d<=dim;d++){const e=data[persona][d]||'BLANK';if(e==='T')cT++;if(e==='F')cF++;if(e==='VAC')cV++;if(e==='DIU')cD++;}
+      let cT=0,cF=0,cV=0,cD=0,c22=0,c14=0,c06=0;
+      for(let d=1;d<=dim;d++){const e=data[persona][d]||'BLANK';if(e==='T')cT++;if(e==='F')cF++;if(e==='VAC')cV++;if(e==='DIU')cD++;if(e==='22')c22++;if(e==='14')c14++;if(e==='06')c06++;}
       tbody+=`<tr><td class="name-cell">${persona}</td>`;
       for(let d=1;d<=dim;d++){
         const est=data[persona][d]||'BLANK';
         const lbl=est==='BLANK'?'-':est;
         tbody+=`<td class="${CRON_CSS[est]||'estado-BLANK'}" onclick="ciclarCron('${persona}',${d})" title="${est}">${lbl}</td>`;
       }
-      const diuCell=cronState.tipo==='personal'?`<td class="sum-cell" style="color:#075985">${cD}</td>`:'';
-      const tCell=cronState.tipo==='personal'?'':`<td class="sum-cell" style="color:#065f46">${cT}</td>`;
-      tbody+=tCell+`<td class="sum-cell" style="color:#92400e">${cF}</td><td class="sum-cell" style="color:#5b21b6">${cV}</td>`+diuCell+`</tr>`;
+      if(cronState.tipo==='personal'){
+        tbody+=`<td class="sum-cell" style="color:#fff;background:#1a1a1a">${c22}</td>`;
+        tbody+=`<td class="sum-cell" style="color:#fff;background:#7c3aed">${c14}</td>`;
+        tbody+=`<td class="sum-cell" style="color:#fff;background:#1d4ed8">${c06}</td>`;
+        tbody+=`<td class="sum-cell" style="color:#92400e">${cF}</td>`;
+        tbody+=`<td class="sum-cell" style="color:#5b21b6">${cV}</td>`;
+        tbody+=`<td class="sum-cell" style="color:#075985">${cD}</td>`;
+      } else {
+        tbody+=`<td class="sum-cell" style="color:#065f46">${cT}</td>`;
+        tbody+=`<td class="sum-cell" style="color:#92400e">${cF}</td>`;
+        tbody+=`<td class="sum-cell" style="color:#5b21b6">${cV}</td>`;
+      }
+      tbody+=`</tr>`;
     });
   }
   tbody+=`</tbody>`;
@@ -893,8 +949,8 @@ function ciclarCron(persona,dia){
   const actual=data[persona][dia]||'BLANK';
   // Ciclo diferente según tipo de cronograma
   const ciclo = cronState.tipo==='personal'
-    ? ['BLANK','F','VAC','DIU']          // Personal COFCO: sin T, agrega DIU
-    : ['BLANK','T','F','VAC','G','LIC']; // Choferes: ciclo completo
+    ? ['BLANK','22','14','06','F','VAC','DIU']  // Personal COFCO: turnos + franco/vac/diu
+    : ['BLANK','T','F','VAC','G','LIC'];         // Choferes: ciclo completo
   const idx=ciclo.indexOf(actual);
   data[persona][dia]=ciclo[(idx+1)%ciclo.length];
   saveCronLS();
