@@ -19,24 +19,25 @@
   --font-mono:'JetBrains Mono',monospace;
 }
 *{margin:0;padding:0;box-sizing:border-box}
-body{background:var(--bg);color:var(--primary);font-family:var(--font-body);min-height:100vh;font-size:14px}
+body{background:var(--bg);color:var(--primary);font-family:var(--font-body);min-height:100vh;font-size:15px;-webkit-font-smoothing:antialiased;-moz-osx-font-smoothing:grayscale;letter-spacing:.01em}
+h1,h2,h3{font-family:var(--font-display);letter-spacing:.5px}
 
 .app-header{background:var(--primary);color:#fff;padding:0 24px;display:flex;align-items:center;justify-content:space-between;height:64px;border-bottom:3px solid var(--accent)}
 .brand{display:flex;align-items:center;gap:14px}
 .brand-logo{height:44px;filter:drop-shadow(0 0 2px rgba(255,255,255,0.3))}
-.brand-name{font-family:var(--font-display);font-size:20px;font-weight:800;letter-spacing:1px}
+.brand-name{font-family:var(--font-display);font-size:22px;font-weight:800;letter-spacing:1.5px;text-transform:uppercase}
 .brand-sub{font-size:11px;color:#9ca3af;letter-spacing:2px;text-transform:uppercase}
 .header-right{display:flex;align-items:center;gap:8px;flex-wrap:wrap}
 
 .period-bar{background:#111;padding:8px 24px;display:flex;align-items:center;gap:14px;border-bottom:1px solid #2d2d2d;flex-wrap:wrap}
 .period-label{font-size:12px;letter-spacing:2px;color:#6b7280;text-transform:uppercase;font-weight:600}
-.period-name{font-family:var(--font-display);font-size:17px;font-weight:700;color:#fff;letter-spacing:1px}
+.period-name{font-family:var(--font-display);font-size:18px;font-weight:700;color:#fff;letter-spacing:1.5px;text-transform:uppercase}
 .period-badge{background:rgba(192,57,43,.2);border:1px solid rgba(192,57,43,.5);color:#f87171;font-size:11px;padding:3px 10px;border-radius:20px;font-weight:600}
 .period-badge.closed{background:rgba(22,163,74,.15);border-color:rgba(22,163,74,.4);color:#4ade80}
 
 .main{padding:20px 24px}
 
-.btn{display:inline-flex;align-items:center;gap:5px;padding:8px 15px;border-radius:7px;border:none;font-family:var(--font-body);font-size:13px;font-weight:600;cursor:pointer;transition:all .15s;white-space:nowrap}
+.btn{display:inline-flex;align-items:center;gap:5px;padding:8px 16px;border-radius:7px;border:none;font-family:var(--font-body);font-size:13.5px;font-weight:600;cursor:pointer;transition:all .15s;white-space:nowrap;letter-spacing:.01em}
 .btn:hover{filter:brightness(.9)}
 .btn-primary{background:var(--accent);color:#fff}
 .btn-dark{background:var(--primary);color:#fff}
@@ -56,8 +57,8 @@ body{background:var(--bg);color:var(--primary);font-family:var(--font-body);min-
 
 .stats-bar{display:grid;grid-template-columns:repeat(5,1fr);gap:11px;margin-bottom:14px}
 .stat-card{background:#fff;border:1.5px solid var(--border);border-radius:10px;padding:13px 15px}
-.stat-lbl{font-size:10px;color:var(--muted);text-transform:uppercase;letter-spacing:.8px;font-weight:600;margin-bottom:3px}
-.stat-val{font-family:var(--font-display);font-size:26px;font-weight:800;line-height:1}
+.stat-lbl{font-size:11px;color:var(--muted);text-transform:uppercase;letter-spacing:1px;font-weight:700;margin-bottom:4px}
+.stat-val{font-family:var(--font-display);font-size:28px;font-weight:800;line-height:1;letter-spacing:.5px}
 .stat-sub{font-size:11px;color:var(--muted);margin-top:2px}
 .c-red{color:var(--accent)}.c-blue{color:var(--blue)}.c-green{color:var(--green)}.c-yellow{color:var(--yellow)}
 
@@ -67,13 +68,13 @@ body{background:var(--bg);color:var(--primary);font-family:var(--font-body);min-
 
 .table-wrap{background:#fff;border-radius:12px;border:1.5px solid var(--border);overflow:hidden;box-shadow:0 1px 4px rgba(0,0,0,.06)}
 .table-scroll{overflow-x:auto}
-table{width:100%;border-collapse:collapse;font-size:13px}
+table{width:100%;border-collapse:collapse;font-size:13.5px;line-height:1.5}
 thead tr{background:var(--primary);color:#fff}
-th{padding:9px 9px;text-align:left;font-family:var(--font-display);font-size:11px;letter-spacing:1px;font-weight:700;white-space:nowrap;border-right:1px solid #333}
+th{padding:10px 10px;text-align:left;font-family:var(--font-display);font-size:12px;letter-spacing:.8px;font-weight:700;white-space:nowrap;border-right:1px solid #333}
 th:last-child{border-right:none}
 tbody tr{border-bottom:1px solid #edf0f4;transition:background .1s}
 tbody tr:hover{background:#fafbfc}
-td{padding:6px 7px;vertical-align:middle;border-right:1px solid #f0f2f5}
+td{padding:8px 9px;vertical-align:middle;border-right:1px solid #f0f2f5;line-height:1.45}
 td:last-child{border-right:none}
 
 .ci{border:none;background:transparent;font-family:var(--font-body);font-size:13px;color:var(--primary);width:100%;outline:none;padding:2px 3px;border-radius:4px;transition:background .15s}
@@ -119,7 +120,7 @@ tfoot tr td{background:#f7f8fa;font-weight:700;border-top:2px solid var(--border
 .del-btn{background:none;border:none;cursor:pointer;color:#d1d5db;font-size:15px;padding:3px 5px;border-radius:4px;transition:all .15s}
 .del-btn:hover{background:#fee2e2;color:var(--accent)}
 
-.app-tab{background:none;border:none;padding:12px 24px;font-family:var(--font-display);font-size:15px;font-weight:700;letter-spacing:1px;cursor:pointer;color:var(--muted);border-bottom:3px solid transparent;transition:all .2s;text-transform:uppercase}
+.app-tab{background:none;border:none;padding:13px 26px;font-family:var(--font-display);font-size:15px;font-weight:700;letter-spacing:1.2px;cursor:pointer;color:var(--muted);border-bottom:3px solid transparent;transition:all .2s;text-transform:uppercase}
 .app-tab.active{color:var(--accent);border-bottom-color:var(--accent);background:#fff8f7}
 .app-tab:hover:not(.active){color:var(--primary)}
 .app-page{display:none}.app-page.active{display:block}
@@ -133,7 +134,7 @@ tfoot tr td{background:#f7f8fa;font-weight:700;border-top:2px solid var(--border
 .rec-day-header.sabado{background:#7c3aed}
 .rec-day-header.viernes{background:#1d4ed8}
 .month-nav{display:flex;align-items:center;gap:12px;margin-bottom:16px}
-.month-title{font-family:var(--font-display);font-size:22px;font-weight:800;letter-spacing:2px}
+.month-title{font-family:var(--font-display);font-size:24px;font-weight:800;letter-spacing:2px;text-transform:uppercase}
 .dow-headers{display:grid;grid-template-columns:repeat(7,1fr);gap:10px;margin-bottom:6px}
 .dow-hdr{text-align:center;font-family:var(--font-display);font-size:12px;font-weight:700;letter-spacing:1px;color:var(--muted);text-transform:uppercase;padding:4px}
 .dow-hdr.dom{color:var(--accent)}.dow-hdr.sab{color:#7c3aed}.dow-hdr.vie{color:var(--blue)}
@@ -167,7 +168,7 @@ tfoot tr td{background:#f7f8fa;font-weight:700;border-top:2px solid var(--border
 .liq-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:14px;margin-bottom:20px}
 .liq-card{background:#fff;border:1.5px solid var(--border);border-radius:12px;overflow:hidden}
 .liq-card-header{background:var(--primary);color:#fff;padding:12px 16px;display:flex;justify-content:space-between;align-items:center}
-.liq-chofer-name{font-family:var(--font-display);font-size:18px;font-weight:700;letter-spacing:1px}
+.liq-chofer-name{font-family:var(--font-display);font-size:20px;font-weight:800;letter-spacing:1.2px}
 .liq-card-body{padding:14px 16px}
 .liq-row{display:flex;justify-content:space-between;align-items:center;padding:5px 0;border-bottom:1px solid #f0f2f5;font-size:13px}
 .liq-row:last-child{border-bottom:none}
@@ -301,6 +302,7 @@ tfoot tr td{background:#f7f8fa;font-weight:700;border-top:2px solid var(--border
       <button class="btn btn-sm" style="background:#e0e7ff;color:#3730a3" onclick="cronSwitch('chofer')" id="cron-btn-chofer">🚗 Choferes</button>
       <button class="btn btn-sm btn-outline" onclick="cronSwitch('personal')" id="cron-btn-personal">👤 Personal COFCO</button>
       <button class="btn btn-green btn-sm" onclick="saveCron()">💾 Guardar</button>
+      <button class="btn btn-dark btn-sm" onclick="exportCronJPG()">📷 Exportar JPG</button>
     </div>
   </div>
   <!-- leyenda -->
@@ -1064,6 +1066,154 @@ function cronPrevMonth(){cronState.viewMonth--;if(cronState.viewMonth<0){cronSta
 function cronNextMonth(){cronState.viewMonth++;if(cronState.viewMonth>11){cronState.viewMonth=0;cronState.viewYear++;}saveCronLS();renderCronograma();}
 function saveCron(){saveCronLS();toast('Cronograma guardado ✓','ok');}
 
+async function exportCronJPG(){
+  // Build a clean printable version of the cronograma
+  const MN=['ENERO','FEBRERO','MARZO','ABRIL','MAYO','JUNIO','JULIO','AGOSTO','SEPTIEMBRE','OCTUBRE','NOVIEMBRE','DICIEMBRE'];
+  const y=cronState.viewYear, m=cronState.viewMonth;
+  const tipo=cronState.tipo;
+  const titulo=`CRONOGRAMA ${tipo==='chofer'?'CHOFERES':'PERSONAL COFCO'} — ${MN[m]} ${y}`;
+  const dim=new Date(y,m+1,0).getDate();
+  const personas=getPersonasCron();
+  const data=getCronData();
+  const DAYNAMES=['D','L','M','X','J','V','S'];
+
+  // Calculate optimal font/cell size based on days and persons
+  const cellW = Math.max(18, Math.floor(900/dim));
+  const nameW = 130;
+  const rowH = 28;
+  const headerH = 48;
+  const totalW = nameW + cellW*dim + 90; // +90 for sum cols
+  const totalH = headerH + rowH*(personas.length+1) + 20;
+
+  const canvas = document.createElement('canvas');
+  const scale = 2; // retina
+  canvas.width = totalW * scale;
+  canvas.height = totalH * scale;
+  const ctx = canvas.getContext('2d');
+  ctx.scale(scale, scale);
+
+  // Background
+  ctx.fillStyle = '#ffffff';
+  ctx.fillRect(0,0,totalW,totalH);
+
+  // Title bar
+  ctx.fillStyle = '#1a1a1a';
+  ctx.fillRect(0, 0, totalW, 36);
+  ctx.fillStyle = '#ffffff';
+  ctx.font = 'bold 14px "Barlow Condensed", Arial, sans-serif';
+  ctx.textAlign = 'left';
+  ctx.fillText(titulo, 12, 24);
+
+  // Legend row
+  const CRON_COLORS_BG  = {T:'#d1fae5',F:'#fef3c7',G:'#dbeafe',VAC:'#ede9fe',LIC:'#fee2e2',BLANK:'#ffffff','22':'#1a1a1a','14':'#7c3aed','06':'#1d4ed8',DIU:'#e0f2fe'};
+  const CRON_COLORS_FG  = {T:'#065f46',F:'#92400e',G:'#1e40af',VAC:'#5b21b6',LIC:'#991b1b',BLANK:'#d1d5db','22':'#ffffff','14':'#ffffff','06':'#ffffff',DIU:'#075985'};
+  const leyX = 12, leyY = 36;
+  const estados = tipo==='personal' ? ['BLANK','22','14','06','F','VAC','DIU'] : ['BLANK','T','F','VAC','G','LIC'];
+  const labels = {BLANK:'-',T:'T',F:'F',G:'G',VAC:'VAC',LIC:'LIC','22':'22','14':'14','06':'06',DIU:'DIU'};
+  let lx = leyX;
+  estados.forEach(e=>{
+    ctx.fillStyle = CRON_COLORS_BG[e]||'#eee';
+    ctx.fillRect(lx, leyY+2, 28, 12);
+    ctx.strokeStyle='#ccc'; ctx.lineWidth=0.5;
+    ctx.strokeRect(lx, leyY+2, 28, 12);
+    ctx.fillStyle = CRON_COLORS_FG[e]||'#333';
+    ctx.font = 'bold 9px Arial';
+    ctx.textAlign='center';
+    ctx.fillText(labels[e], lx+14, leyY+12);
+    lx += 34;
+  });
+
+  // Header row (day names + numbers)
+  const hY = headerH;
+  // "NOMBRE" cell
+  ctx.fillStyle = '#1a1a1a';
+  ctx.fillRect(0, hY, nameW, rowH);
+  ctx.fillStyle='#fff';
+  ctx.font='bold 10px "Barlow Condensed",Arial';
+  ctx.textAlign='left';
+  ctx.fillText('NOMBRE', 8, hY+18);
+
+  for(let d=1;d<=dim;d++){
+    const dw=new Date(y,m,d).getDay();
+    const x=nameW+(d-1)*cellW;
+    const isDOM=dw===0, isSAB=dw===6;
+    ctx.fillStyle = isDOM?'#c0392b':isSAB?'#7c3aed':'#1a1a1a';
+    ctx.fillRect(x, hY, cellW, rowH);
+    ctx.fillStyle='#fff';
+    ctx.font='bold 8px Arial';
+    ctx.textAlign='center';
+    ctx.fillText(DAYNAMES[dw], x+cellW/2, hY+11);
+    ctx.font='bold 9px Arial';
+    ctx.fillText(d, x+cellW/2, hY+22);
+  }
+  // Sum headers
+  const sumCols = tipo==='personal'
+    ? [{lbl:'22',bg:'#1a1a1a',fg:'#fff'},{lbl:'14',bg:'#7c3aed',fg:'#fff'},{lbl:'06',bg:'#1d4ed8',fg:'#fff'},{lbl:'F',bg:'#374151',fg:'#fff'},{lbl:'VAC',bg:'#374151',fg:'#fff'},{lbl:'DIU',bg:'#075985',fg:'#fff'}]
+    : [{lbl:'T',bg:'#374151',fg:'#fff'},{lbl:'F',bg:'#374151',fg:'#fff'},{lbl:'VAC',bg:'#374151',fg:'#fff'}];
+  sumCols.forEach((sc,si)=>{
+    const x=nameW+dim*cellW+si*30;
+    ctx.fillStyle=sc.bg;
+    ctx.fillRect(x,hY,30,rowH);
+    ctx.fillStyle=sc.fg;
+    ctx.font='bold 9px Arial';
+    ctx.textAlign='center';
+    ctx.fillText(sc.lbl, x+15, hY+18);
+  });
+
+  // Data rows
+  personas.forEach((persona,pi)=>{
+    if(!data[persona])data[persona]={};
+    const rY = hY + rowH + pi*rowH;
+    // Zebra
+    ctx.fillStyle = pi%2===0?'#ffffff':'#f9fafb';
+    ctx.fillRect(0, rY, totalW, rowH);
+    // Name
+    ctx.fillStyle='#1a1a1a';
+    ctx.font='bold 10px "Barlow Condensed",Arial';
+    ctx.textAlign='left';
+    ctx.fillText(persona, 8, rY+18);
+    // Right border on name col
+    ctx.strokeStyle='#e5e7eb'; ctx.lineWidth=1;
+    ctx.beginPath(); ctx.moveTo(nameW,rY); ctx.lineTo(nameW,rY+rowH); ctx.stroke();
+
+    let cT=0,cF=0,cV=0,cD=0,c22=0,c14=0,c06=0;
+    for(let d=1;d<=dim;d++){
+      const e=data[persona][d]||'BLANK';
+      if(e==='T')cT++; if(e==='F')cF++; if(e==='VAC')cV++;
+      if(e==='DIU')cD++; if(e==='22')c22++; if(e==='14')c14++; if(e==='06')c06++;
+      const x=nameW+(d-1)*cellW;
+      ctx.fillStyle=CRON_COLORS_BG[e]||'#fff';
+      ctx.fillRect(x+0.5, rY+0.5, cellW-1, rowH-1);
+      ctx.fillStyle=CRON_COLORS_FG[e]||'#333';
+      ctx.font='bold 9px Arial';
+      ctx.textAlign='center';
+      const lbl=e==='BLANK'?'-':e;
+      ctx.fillText(lbl, x+cellW/2, rY+18);
+    }
+    // Sum cells
+    const sums = tipo==='personal'?[c22,c14,c06,cF,cV,cD]:[cT,cF,cV];
+    sums.forEach((sv,si)=>{
+      const x=nameW+dim*cellW+si*30;
+      ctx.fillStyle='#f7f8fa';
+      ctx.fillRect(x+0.5,rY+0.5,29,rowH-1);
+      ctx.fillStyle='#374151';
+      ctx.font='bold 9px "JetBrains Mono",monospace';
+      ctx.textAlign='center';
+      ctx.fillText(sv, x+15, rY+18);
+    });
+    // Row bottom border
+    ctx.strokeStyle='#e5e7eb'; ctx.lineWidth=0.5;
+    ctx.beginPath(); ctx.moveTo(0,rY+rowH); ctx.lineTo(totalW,rY+rowH); ctx.stroke();
+  });
+
+  // Download
+  const link=document.createElement('a');
+  link.download=`Cronograma_${tipo}_${MN[m]}_${y}.jpg`;
+  link.href=canvas.toDataURL('image/jpeg',0.95);
+  link.click();
+  toast('Cronograma exportado ✓','ok');
+}
+
 function addPersonalCron(){
   const nombre=prompt('Nombre completo del pasajero/personal:','');
   if(!nombre||!nombre.trim())return;
@@ -1300,7 +1450,7 @@ document.querySelectorAll('.modal-ov,.confirm-ov').forEach(el=>el.addEventListen
 
 (function preload(){
   // VERSION KEY: cambiar este valor fuerza recarga de datos aunque ya haya localStorage
-  const DATA_VERSION = 'v_20260318_52rows';
+  const DATA_VERSION = 'v_20260319_68rows';
   const p=curP();
   const tarifas={km:497.22,esp:3808.60,auto:21698.58,combi:43397.16,planta:0};
   // Si ya se cargó esta versión exacta de datos, no pisar
@@ -1361,7 +1511,23 @@ document.querySelectorAll('.modal-ov,.confirm-ov').forEach(el=>el.addEventListen
     {fecha:'2026-03-14',chofer:'GONZALEZ',horario:'02:00',detalle:'RETIRA ZALAZAR BRUNO E INSAURRALDE ALEJANDRO',costoExt:'5646.73',tipo:'AUTO',km:'',hbEsp:''},
     {fecha:'2026-03-14',chofer:'BARRERA',horario:'10:00',detalle:'RETIRA THIAGO VERA, LUCARENA ULISES Y FIORITTI MARCELO',costoExt:'11293.46',tipo:'AUTO',km:'',hbEsp:''},
     {fecha:'2026-03-14',chofer:'BARRERA',horario:'16:00',detalle:'RETIRA ROZUADONSQUEY CLARA, HAILANT SEBASTIAN Y ARGUELLO',costoExt:'11293.46',tipo:'AUTO',km:'',hbEsp:''},
-    {fecha:'2026-03-14',chofer:'BARRERA',horario:'20:00',detalle:'RETIRA MACHELLO AGUSTIN, FERREYRA SAMUEL Y PALOMERO BAUTISTA',costoExt:'11293.46',tipo:'AUTO',km:'',hbEsp:''}
+    {fecha:'2026-03-14',chofer:'BARRERA',horario:'20:00',detalle:'RETIRA MACHELLO AGUSTIN, FERREYRA SAMUEL Y PALOMERO BAUTISTA',costoExt:'11293.46',tipo:'AUTO',km:'',hbEsp:''},
+    {fecha:'2026-03-16',chofer:'GONZALEZ',horario:'07:00',detalle:'RECORRIDO PARADO DE PLANTA',costoExt:'',tipo:'PLANTA',km:'',hbEsp:''},
+    {fecha:'2026-03-16',chofer:'BOLADO',horario:'07:00',detalle:'INGRESA DIEGO CAMP',costoExt:'',tipo:'AUTO',km:'',hbEsp:''},
+    {fecha:'2026-03-16',chofer:'BOLADO',horario:'18:00',detalle:'INGRESA LATINA CLAUDIO - RETIRA RECALT YASMIN',costoExt:'5646.73',tipo:'AUTO',km:'',hbEsp:''},
+    {fecha:'2026-03-17',chofer:'GONZALEZ',horario:'07:00',detalle:'RECORRIDO PARADO DE PLANTA',costoExt:'',tipo:'PLANTA',km:'',hbEsp:''},
+    {fecha:'2026-03-17',chofer:'TOLEDO',horario:'07:00',detalle:'INGRESA DIEGO CAMP',costoExt:'',tipo:'AUTO',km:'',hbEsp:''},
+    {fecha:'2026-03-17',chofer:'CHAPARRO',horario:'08:30',detalle:'TRASLADO DESDE JUNIN A INTENDENTE ALVEAR AL OPERARIO RODRIGUEZ TERRONES DIEGO',costoExt:'',tipo:'AUTO',km:'568',hbEsp:''},
+    {fecha:'2026-03-17',chofer:'BOLADO',horario:'18:00',detalle:'INGRESA LATINA CLAUDIO, HAILANT SEBASTIAN Y  CERUNDULO DAVID - RETIRA RECALT YASMIN',costoExt:'16940.19',tipo:'AUTO',km:'',hbEsp:''},
+    {fecha:'2026-03-17',chofer:'BOLADO',horario:'19:00',detalle:'RETIRA RODRIGUEZ MASSI',costoExt:'',tipo:'AUTO',km:'',hbEsp:''},
+    {fecha:'2026-03-16',chofer:'GONZALEZ',horario:'02:00',detalle:'INGRESA LEDESMA ALEJANDRO',costoExt:'',tipo:'AUTO',km:'',hbEsp:''},
+    {fecha:'2026-03-17',chofer:'GONZALEZ',horario:'02:00',detalle:'INGRESA LEDESMA ALEJANDRO',costoExt:'',tipo:'AUTO',km:'',hbEsp:''},
+    {fecha:'2026-03-18',chofer:'MEDINA',horario:'10:30',detalle:'TRASLADO DE PLACA A SAN NICOLAS - SOLICITADO POR CARRERA PABLO',costoExt:'',tipo:'AUTO',km:'330',hbEsp:''},
+    {fecha:'2026-03-18',chofer:'GONZALEZ',horario:'07:00',detalle:'RECORRIDO PARADO DE PLANTA',costoExt:'',tipo:'PLANTA',km:'',hbEsp:''},
+    {fecha:'2026-03-18',chofer:'GONZALEZ',horario:'02:00',detalle:'INGRESA LEDESMA ALEJANDRO - RETIRA INSAURRALDE Y ZALAZAR BRUNO',costoExt:'11293.46',tipo:'AUTO',km:'',hbEsp:''},
+    {fecha:'2026-03-18',chofer:'TOLEDO',horario:'07:00',detalle:'INGRESA CAMP DIEGO',costoExt:'',tipo:'AUTO',km:'',hbEsp:''},
+    {fecha:'2026-03-18',chofer:'REINA',horario:'18:00',detalle:'INGRESA HAILANT SEBASTIAN, CERUNDULO DAVID  Y LATINA CLAUDIO',costoExt:'11293.46',tipo:'AUTO',km:'',hbEsp:''},
+    {fecha:'2026-03-18',chofer:'REINA',horario:'19:00',detalle:'RETIRA MONZON NICOLAS Y RODRIGUEZ MASSI RENZO',costoExt:'5646.73',tipo:'AUTO',km:'',hbEsp:''}
   ];
   p.rows=[];  raw.forEach(r=>{const row=newRow();Object.assign(row,r);calcRow(row,tarifas);p.rows.push(row);});
   save();renderAll();
