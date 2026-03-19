@@ -551,7 +551,8 @@ function getAllChoferes(){const set=new Set(recState.choferes);Object.values(rec
 function renderRecorridos(){
   const year=recState.viewYear,month=recState.viewMonth;
   const MN=['Enero','Febrero','Marzo','Abril','Mayo','Junio','Julio','Agosto','Septiembre','Octubre','Noviembre','Diciembre'];
-  const firstDay=new Date(year,month,1).getDay();
+  const rawDay=new Date(year,month,1).getDay();
+  const firstDay=(rawDay+6)%7; // Monday-first: Mon=0 ... Sun=6
   const dim=new Date(year,month+1,0).getDate();
   const tod=new Date().toISOString().split('T')[0];
 
@@ -570,8 +571,8 @@ function renderRecorridos(){
   </div>
   ${copyBannerHtml}
   <div class="dow-headers">
-    <div class="dow-hdr dom">DOM</div><div class="dow-hdr">LUN</div><div class="dow-hdr">MAR</div>
-    <div class="dow-hdr">MIÉ</div><div class="dow-hdr">JUE</div><div class="dow-hdr vie">VIE</div><div class="dow-hdr sab">SÁB</div>
+    <div class="dow-hdr">LUN</div><div class="dow-hdr">MAR</div><div class="dow-hdr">MIÉ</div>
+    <div class="dow-hdr">JUE</div><div class="dow-hdr vie">VIE</div><div class="dow-hdr sab">SÁB</div><div class="dow-hdr dom">DOM</div>
   </div>
   <div class="rec-calendar">`;
   for(let i=0;i<firstDay;i++)html+=`<div class="rec-day-empty"></div>`;
