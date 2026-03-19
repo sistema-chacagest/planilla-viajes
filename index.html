@@ -4,7 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Chacabuco Noroeste Tour S.R.L — Planilla de Viajes</title>
-<link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@400;600;700;800&family=Barlow:wght@300;400;500;600&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Inter+Tight:wght@600;700;800&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
 <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-app-compat.js"></script>
@@ -14,12 +14,12 @@
   --bg:#f0f2f5;--surface:#fff;--border:#dde1e8;
   --primary:#1a1a1a;--accent:#c0392b;--muted:#6b7280;
   --green:#16a34a;--blue:#1d4ed8;--yellow:#d97706;
-  --font-display:'Barlow Condensed',sans-serif;
-  --font-body:'Barlow',sans-serif;
+  --font-display:'Inter Tight',sans-serif;
+  --font-body:'Inter',sans-serif;
   --font-mono:'JetBrains Mono',monospace;
 }
 *{margin:0;padding:0;box-sizing:border-box}
-body{background:var(--bg);color:var(--primary);font-family:var(--font-body);min-height:100vh;font-size:15px;-webkit-font-smoothing:antialiased;-moz-osx-font-smoothing:grayscale;letter-spacing:.01em}
+body{background:var(--bg);color:var(--primary);font-family:var(--font-body);min-height:100vh;font-size:14px;-webkit-font-smoothing:antialiased;-moz-osx-font-smoothing:grayscale;line-height:1.55}
 h1,h2,h3{font-family:var(--font-display);letter-spacing:.5px}
 
 .app-header{background:var(--primary);color:#fff;padding:0 24px;display:flex;align-items:center;justify-content:space-between;height:64px;border-bottom:3px solid var(--accent)}
@@ -1076,13 +1076,16 @@ async function exportCronJPG(){
   const dim=new Date(y,m+1,0).getDate();
   const personas=getPersonasCron();
   const data=getCronData();
-  const DAYNAMES=['D','L','M','X','J','V','S'];
+  // LUN=0, MAR=1, MIÉ=2, JUE=3, VIE=4, SÁB=5, DOM=6 (Monday-first)
+  const DAYNAMES_MON=['LUN','MAR','MIÉ','JUE','VIE','SÁB','DOM'];
+  // getDay() returns: 0=DOM,1=LUN,...,6=SAB → convert to Mon-first index
+  function monFirstDay(dw){return(dw+6)%7;}
 
   // Calculate optimal font/cell size based on days and persons
   const cellW = Math.max(18, Math.floor(900/dim));
   const nameW = 130;
   const rowH = 28;
-  const headerH = 48;
+  const headerH = 52;
   const totalW = nameW + cellW*dim + 90; // +90 for sum cols
   const totalH = headerH + rowH*(personas.length+1) + 20;
 
@@ -1099,16 +1102,21 @@ async function exportCronJPG(){
 
   // Title bar
   ctx.fillStyle = '#1a1a1a';
-  ctx.fillRect(0, 0, totalW, 36);
+  ctx.fillRect(0, 0, totalW, 40);
+  ctx.fillStyle = '#c0392b';
+  ctx.fillRect(0, 37, totalW, 3);
   ctx.fillStyle = '#ffffff';
-  ctx.font = 'bold 14px "Barlow Condensed", Arial, sans-serif';
+  ctx.font = 'bold 15px Arial';
   ctx.textAlign = 'left';
-  ctx.fillText(titulo, 12, 24);
+  ctx.fillText('CHACABUCO NOROESTE TOUR S.R.L', 12, 18);
+  ctx.font = '600 12px Arial';
+  ctx.fillStyle = '#9ca3af';
+  ctx.fillText(titulo, 12, 33);
 
   // Legend row
   const CRON_COLORS_BG  = {T:'#d1fae5',F:'#fef3c7',G:'#dbeafe',VAC:'#ede9fe',LIC:'#fee2e2',BLANK:'#ffffff','22':'#1a1a1a','14':'#7c3aed','06':'#1d4ed8',DIU:'#e0f2fe'};
   const CRON_COLORS_FG  = {T:'#065f46',F:'#92400e',G:'#1e40af',VAC:'#5b21b6',LIC:'#991b1b',BLANK:'#d1d5db','22':'#ffffff','14':'#ffffff','06':'#ffffff',DIU:'#075985'};
-  const leyX = 12, leyY = 36;
+  const leyX = 12, leyY = 40;
   const estados = tipo==='personal' ? ['BLANK','22','14','06','F','VAC','DIU'] : ['BLANK','T','F','VAC','G','LIC'];
   const labels = {BLANK:'-',T:'T',F:'F',G:'G',VAC:'VAC',LIC:'LIC','22':'22','14':'14','06':'06',DIU:'DIU'};
   let lx = leyX;
@@ -1138,12 +1146,12 @@ async function exportCronJPG(){
     const dw=new Date(y,m,d).getDay();
     const x=nameW+(d-1)*cellW;
     const isDOM=dw===0, isSAB=dw===6;
-    ctx.fillStyle = isDOM?'#c0392b':isSAB?'#7c3aed':'#1a1a1a';
+    ctx.fillStyle = isDOM?'#c0392b':isSAB?'#7c3aed':'#374151';
     ctx.fillRect(x, hY, cellW, rowH);
     ctx.fillStyle='#fff';
-    ctx.font='bold 8px Arial';
+    ctx.font='bold 7px Arial';
     ctx.textAlign='center';
-    ctx.fillText(DAYNAMES[dw], x+cellW/2, hY+11);
+    ctx.fillText(DAYNAMES_MON[monFirstDay(dw)], x+cellW/2, hY+11);
     ctx.font='bold 9px Arial';
     ctx.fillText(d, x+cellW/2, hY+22);
   }
