@@ -375,6 +375,23 @@ const db = firebase.database();
 let _fbSaving = false;
 
 // ── Escucha cambios en tiempo real desde Firebase ──
+function seedToFirebase(viajesStr, recStr, cronStr) {
+  // Called once to populate Firebase from localStorage data
+  try {
+    const vObj = JSON.parse(viajesStr);
+    const rObj = JSON.parse(recStr);
+    const cObj = JSON.parse(cronStr);
+    Promise.all([
+      db.ref('viajes').set(vObj),
+      db.ref('recorridos').set(rObj),
+      db.ref('cronograma').set(cObj)
+    ]).then(()=>{
+      localStorage.setItem('_fb_seeded','1');
+      toast('Datos sincronizados con Firebase ✓','ok');
+    });
+  } catch(e) { console.error('Seed error', e); }
+}
+
 function initFirebaseListeners() {
   db.ref('viajes').on('value', snap => {
     if (_fbSaving) return;
