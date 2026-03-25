@@ -1467,6 +1467,8 @@ document.querySelectorAll('.modal-ov,.confirm-ov').forEach(el=>el.addEventListen
       const overlay=document.getElementById('fb-loading');
       if(overlay)overlay.remove();
       initFirebaseListeners();
+      // ── Ejecutar preload RECIÉN AQUÍ, cuando ya tenemos los datos de Firebase ──
+      runPreload();
     },300);
   }
 
@@ -1516,9 +1518,9 @@ document.querySelectorAll('.modal-ov,.confirm-ov').forEach(el=>el.addEventListen
   return; // Skip the old preload, Firebase load handles it
 })();
 
-(function preload(){
+function runPreload(){
   // SEGURO: solo carga datos base si el período está completamente vacío
-  // NUNCA pisa datos existentes sin importar la versión
+  // Solo se ejecuta DESPUÉS de que Firebase cargó sus datos
   const p=curP();
   const tarifas={km:497.22,esp:3808.60,auto:21698.58,combi:43397.16,planta:0};
   // Si ya hay filas cargadas → NO tocar nada, respetar los datos del usuario
@@ -1598,7 +1600,7 @@ document.querySelectorAll('.modal-ov,.confirm-ov').forEach(el=>el.addEventListen
   // Solo llega aquí si rows está vacío — cargar datos base del Excel
   raw.forEach(r=>{const row=newRow();Object.assign(row,r);calcRow(row,tarifas);p.rows.push(row);});
   save();renderAll();
-})();
+}
 </script>
 </body>
 </html>
