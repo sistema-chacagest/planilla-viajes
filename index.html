@@ -427,16 +427,14 @@ function initFirebaseListeners() {
 // VIAJES / PERÍODOS
 // ══════════════════════════════════════════════════════════
 const SK = 'cnt_v5';
-let S = loadS();
+let S = initS();
 let curId = S.cur;
 let searchQ = '';
 
-function loadS(){try{const s=JSON.parse(localStorage.getItem(SK));if(s&&s.periods)return s;}catch(e){}return initS();}
 function initS(){const id='p'+Date.now();const now=new Date();return{cur:id,periods:[{id,name:monthName(now),created:today(),closed:null,rows:[],t:{km:497.22,esp:3808.60,auto:21698.58,combi:43397.16}}]};}
 function monthName(d){return d.toLocaleString('es-AR',{month:'long',year:'numeric'}).toUpperCase();}
 function today(){return new Date().toISOString().split('T')[0];}
 function save(){
-  localStorage.setItem(SK,JSON.stringify(S));
   _fbSaving=true;
   db.ref('viajes').set(S).finally(()=>{_fbSaving=false;});
 }
@@ -518,14 +516,12 @@ function exportExcel(){const p=curP();if(!p)return;const wb=XLSX.utils.book_new(
 // RECORRIDOS
 // ══════════════════════════════════════════════════════════
 const SK_R='cnt_recorridos_v1';
-let recState=loadRecState();
+let recState=initRecState();
 let currentDayStr=null;
 
-function loadRecState(){try{const s=JSON.parse(localStorage.getItem(SK_R));if(s&&s.choferes)return s;}catch(e){}return initRecState();}
 function initRecState(){const now=new Date();return{choferes:['GONZALEZ ALICIO','REINA SEBASTIAN','BARRERA FERNANDO','BOLADO JOSE'],valorHora:5805.20,viewYear:now.getFullYear(),viewMonth:now.getMonth(),days:{},templates:initTemplates()};}
 function initTemplates(){return{lunes:{choferes:{}},martes:{choferes:{}},miercoles:{choferes:{}},jueves:{choferes:{}},viernes:{choferes:{}},sabado:{choferes:{}},domingo:{choferes:{}}};}
 function saveRec(){
-  localStorage.setItem(SK_R,JSON.stringify(recState));
   _fbSaving=true;
   db.ref('recorridos').set(recState).finally(()=>{_fbSaving=false;});
 }
@@ -1003,11 +999,9 @@ function removeChofer(i){recState.choferes.splice(i,1);saveRec();openChoferesMgr
 // CRONOGRAMA DE FRANCOS
 // ══════════════════════════════════════════════════════════
 const SK_CRON='cnt_cronograma_v1';
-let cronState=loadCronState();
+let cronState={tipo:'chofer',viewYear:new Date().getFullYear(),viewMonth:new Date().getMonth(),data:{}};
 
-function loadCronState(){try{const s=JSON.parse(localStorage.getItem(SK_CRON));if(s)return s;}catch(e){}return{tipo:'chofer',viewYear:new Date().getFullYear(),viewMonth:new Date().getMonth(),data:{}};}
 function saveCronLS(){
-  localStorage.setItem(SK_CRON,JSON.stringify(cronState));
   _fbSaving=true;
   db.ref('cronograma').set(cronState).finally(()=>{_fbSaving=false;});
 }
@@ -1479,7 +1473,7 @@ document.querySelectorAll('.modal-ov,.confirm-ov').forEach(el=>el.addEventListen
     const msg=document.getElementById('fb-loading-msg');
     if(msg)msg.textContent='Cargando planilla de viajes...';
     const val=snap.val();
-    if(val&&val.periods){S=val;curId=S.cur;localStorage.setItem(SK,JSON.stringify(S));}
+    if(val&&val.periods){S=val;curId=S.cur;}
     loaded.viajes=true;checkAllLoaded();
   }).catch(()=>{loaded.viajes=true;checkAllLoaded();});
 
@@ -1487,7 +1481,7 @@ document.querySelectorAll('.modal-ov,.confirm-ov').forEach(el=>el.addEventListen
     const msg=document.getElementById('fb-loading-msg');
     if(msg)msg.textContent='Cargando recorridos...';
     const val=snap.val();
-    if(val&&val.choferes){recState=val;localStorage.setItem(SK_R,JSON.stringify(recState));}
+    if(val&&val.choferes){recState=val;}
     loaded.recorridos=true;checkAllLoaded();
   }).catch(()=>{loaded.recorridos=true;checkAllLoaded();});
 
@@ -1495,7 +1489,7 @@ document.querySelectorAll('.modal-ov,.confirm-ov').forEach(el=>el.addEventListen
     const msg=document.getElementById('fb-loading-msg');
     if(msg)msg.textContent='Cargando cronograma...';
     const val=snap.val();
-    if(val){cronState=val;localStorage.setItem(SK_CRON,JSON.stringify(cronState));}
+    if(val){cronState=val;}
     loaded.cronograma=true;checkAllLoaded();
   }).catch(()=>{loaded.cronograma=true;checkAllLoaded();});
 
