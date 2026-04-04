@@ -112,9 +112,9 @@ select.sel,select.sel-c,select.sel-m{border:none!important;background:transparen
   <div class="print-fecha" id="print-fecha-txt"></div>
 </div>
 <div class="tabs">
-  <button class="tab active" onclick="switchTab('planilla')">Planilla del dia</button>
-  <button class="tab" onclick="switchTab('choferes')">Choferes</button>
-  <button class="tab" onclick="switchTab('mensajes')">Mensajes WhatsApp</button>
+  <button class="tab active" id="tab-btn-planilla" onclick="switchTab('planilla')">Planilla del dia</button>
+  <button class="tab" id="tab-btn-choferes" onclick="switchTab('choferes')">Choferes</button>
+  <button class="tab" id="tab-btn-mensajes" onclick="switchTab('mensajes')">Mensajes WhatsApp</button>
 </div>
 <div class="section active" id="tab-planilla">
   <div class="topbar no-print">
@@ -314,7 +314,6 @@ function subAll(){
     if(snap.exists()){snap.forEach(function(c){choferes.push(Object.assign({},c.val(),{_key:c.key}));});}
     choferes.sort(function(a,b){return a.nombre.localeCompare(b.nombre);});
     renderChoferes(); renderMoviles(); populateForms(); renderAll();
-    if(document.querySelector(".tab:nth-child(3)").classList.contains("active")) renderMensajes();
   });
   unsubs.push(function(){chRef.off("value");});
   var mvRef=db.ref("moviles");
@@ -349,11 +348,15 @@ function fmtF(f){if(!f)return"";var p=f.split("-");return p[2]+"/"+p[1]+"/"+p[0]
 function toMin(h){var p=(h||"0:00").split(":");return parseInt(p[0])*60+parseInt(p[1]||0);}
 function ini(n){return n.trim().split(" ").map(function(w){return w[0];}).join("").substring(0,2).toUpperCase();}
 function switchTab(name){
-  ["planilla","choferes","mensajes"].forEach(function(n,i){
-    document.querySelectorAll(".tab")[i].classList.toggle("active",n===name);
-    document.getElementById("tab-"+n).classList.toggle("active",n===name);
+  ["planilla","choferes","mensajes"].forEach(function(n){
+    var btn=document.getElementById("tab-btn-"+n);
+    var sec=document.getElementById("tab-"+n);
+    if(btn) btn.classList.toggle("active",n===name);
+    if(sec) sec.classList.toggle("active",n===name);
   });
-  if(name==="mensajes") setTimeout(function(){ renderMensajes(); }, 300);
+  if(name==="mensajes") setTimeout(function(){ renderMensajes(); },300);
+});
+  if(name==="mensajes") renderMensajes();
 }
 function toggleForm(id){
   ["form-rec","form-con","form-fra"].forEach(function(f){
@@ -652,11 +655,11 @@ function copiarDiaAnterior(){
 }
 function imprimirPDF(){
   document.getElementById("print-fecha-txt").innerHTML="Fecha: <strong>"+fmtF(getFecha())+"</strong><br>Rec: "+diaData.recorridos.length+" | Cont: "+diaData.contratados.length+" | Francos: "+diaData.francos.length;
-  ["planilla","choferes","mensajes"].forEach(function(n,i){document.querySelectorAll(".tab")[i].classList.toggle("active",n==="planilla");document.getElementById("tab-"+n).classList.toggle("active",n==="planilla");});
+  ["planilla","choferes","mensajes"].forEach(function(n){var btn=document.getElementById("tab-btn-"+n);var sec=document.getElementById("tab-"+n);if(btn)btn.classList.toggle("active",n==="planilla");if(sec)sec.classList.toggle("active",n==="planilla");});
   setTimeout(function(){window.print();},150);
 }
 function exportarJPG(){
-  ["planilla","choferes","mensajes"].forEach(function(n,i){document.querySelectorAll(".tab")[i].classList.toggle("active",n==="planilla");document.getElementById("tab-"+n).classList.toggle("active",n==="planilla");});
+  ["planilla","choferes","mensajes"].forEach(function(n){var btn=document.getElementById("tab-btn-"+n);var sec=document.getElementById("tab-"+n);if(btn)btn.classList.toggle("active",n==="planilla");if(sec)sec.classList.toggle("active",n==="planilla");});
   document.getElementById("print-fecha-txt").innerHTML="Fecha: <strong>"+fmtF(getFecha())+"</strong> | Rec: "+diaData.recorridos.length+" | Cont: "+diaData.contratados.length+" | Francos: "+diaData.francos.length;
   var hdr=document.getElementById("print-hdr");
   var topbar=document.querySelector(".topbar");
