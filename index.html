@@ -112,9 +112,9 @@ select.sel,select.sel-c,select.sel-m{border:none!important;background:transparen
   <div class="print-fecha" id="print-fecha-txt"></div>
 </div>
 <div class="tabs">
-  <button class="tab active" id="tab-btn-planilla" onclick="switchTab('planilla')">Planilla del dia</button>
-  <button class="tab" id="tab-btn-choferes" onclick="switchTab('choferes')">Choferes</button>
-  <button class="tab" id="tab-btn-mensajes" onclick="switchTab('mensajes')">Mensajes WhatsApp</button>
+  <button class="tab active" id="tb-planilla" onclick="switchTab('planilla')">Planilla del dia</button>
+  <button class="tab" id="tb-choferes" onclick="switchTab('choferes')">Choferes</button>
+  <button class="tab" id="tb-mensajes" onclick="switchTab('mensajes')">Mensajes WhatsApp</button>
 </div>
 <div class="section active" id="tab-planilla">
   <div class="topbar no-print">
@@ -314,6 +314,7 @@ function subAll(){
     if(snap.exists()){snap.forEach(function(c){choferes.push(Object.assign({},c.val(),{_key:c.key}));});}
     choferes.sort(function(a,b){return a.nombre.localeCompare(b.nombre);});
     renderChoferes(); renderMoviles(); populateForms(); renderAll();
+    var tbMsg=document.getElementById("tb-mensajes"); if(tbMsg&&tbMsg.classList.contains("active")) renderMensajes();
   });
   unsubs.push(function(){chRef.off("value");});
   var mvRef=db.ref("moviles");
@@ -349,14 +350,12 @@ function toMin(h){var p=(h||"0:00").split(":");return parseInt(p[0])*60+parseInt
 function ini(n){return n.trim().split(" ").map(function(w){return w[0];}).join("").substring(0,2).toUpperCase();}
 function switchTab(name){
   ["planilla","choferes","mensajes"].forEach(function(n){
-    var btn=document.getElementById("tab-btn-"+n);
+    var btn=document.getElementById("tb-"+n);
     var sec=document.getElementById("tab-"+n);
     if(btn) btn.classList.toggle("active",n===name);
     if(sec) sec.classList.toggle("active",n===name);
   });
-  if(name==="mensajes") setTimeout(function(){ renderMensajes(); },300);
-});
-  if(name==="mensajes") renderMensajes();
+  if(name==="mensajes") setTimeout(function(){ renderMensajes(); },500);
 }
 function toggleForm(id){
   ["form-rec","form-con","form-fra"].forEach(function(f){
@@ -655,11 +654,11 @@ function copiarDiaAnterior(){
 }
 function imprimirPDF(){
   document.getElementById("print-fecha-txt").innerHTML="Fecha: <strong>"+fmtF(getFecha())+"</strong><br>Rec: "+diaData.recorridos.length+" | Cont: "+diaData.contratados.length+" | Francos: "+diaData.francos.length;
-  ["planilla","choferes","mensajes"].forEach(function(n){var btn=document.getElementById("tab-btn-"+n);var sec=document.getElementById("tab-"+n);if(btn)btn.classList.toggle("active",n==="planilla");if(sec)sec.classList.toggle("active",n==="planilla");});
+  ["planilla","choferes","mensajes"].forEach(function(n){var btn=document.getElementById("tb-"+n);var sec=document.getElementById("tab-"+n);if(btn)btn.classList.toggle("active",n==="planilla");if(sec)sec.classList.toggle("active",n==="planilla");});
   setTimeout(function(){window.print();},150);
 }
 function exportarJPG(){
-  ["planilla","choferes","mensajes"].forEach(function(n){var btn=document.getElementById("tab-btn-"+n);var sec=document.getElementById("tab-"+n);if(btn)btn.classList.toggle("active",n==="planilla");if(sec)sec.classList.toggle("active",n==="planilla");});
+  ["planilla","choferes","mensajes"].forEach(function(n){var btn=document.getElementById("tb-"+n);var sec=document.getElementById("tab-"+n);if(btn)btn.classList.toggle("active",n==="planilla");if(sec)sec.classList.toggle("active",n==="planilla");});
   document.getElementById("print-fecha-txt").innerHTML="Fecha: <strong>"+fmtF(getFecha())+"</strong> | Rec: "+diaData.recorridos.length+" | Cont: "+diaData.contratados.length+" | Francos: "+diaData.francos.length;
   var hdr=document.getElementById("print-hdr");
   var topbar=document.querySelector(".topbar");
@@ -745,7 +744,7 @@ function renderMensajes(){
   var nombres=Object.keys(por);
   if(!nombres.length){cont.innerHTML="<div style=\"text-align:center;padding:2rem;color:#aaa\">No hay choferes asignados aun</div>";return;}
   cont.innerHTML=nombres.map(function(nombre){
-    var ch=choferes.find(function(c){return c.nombre===nombre;});var tel=ch?ch.tel:"";
+    var ch=choferes.find(function(c){return c.nombre===nombre;})||choferes.find(function(c){return c.nombre.toLowerCase()===nombre.toLowerCase();});var tel=ch?(ch.tel||"").replace(/[\s\-\(\)]/g,""):"";
     var l=por[nombre];
     var rS=l.rec.slice().sort(function(a,b){return toMin(a.hora)-toMin(b.hora);});
     var cS=l.con.slice().sort(function(a,b){return toMin(a.hora)-toMin(b.hora);});
