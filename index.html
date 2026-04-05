@@ -1496,6 +1496,16 @@ document.querySelectorAll('.modal-ov,.confirm-ov').forEach(el=>el.addEventListen
   const msg=document.getElementById('fb-loading-msg');
   if(msg)msg.textContent='Conectando con Firebase...';
 
+  // Actualizar estado visual al conectar
+  const fbEl=document.getElementById('fb-status');
+  db.ref('.info/connected').once('value').then(snap=>{
+    if(snap.val()===true && fbEl){
+      fbEl.textContent='🟢 Conectado';
+      fbEl.style.background='rgba(22,163,74,.2)';
+      fbEl.style.color='#4ade80';
+    }
+  });
+
   db.ref('viajes').once('value').then(snap=>{
     const data=snap.val();
     if(data){ try{ S=data; if(!S.periods)S=initS(); curId=S.cur; localStorage.setItem(SK,JSON.stringify(S)); }catch(e){} }
