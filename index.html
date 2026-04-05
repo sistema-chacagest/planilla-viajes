@@ -395,8 +395,54 @@ function seedToFirebase(viajesStr, recStr, cronStr) {
 
 
 function initFirebaseListeners() {
-  // Firebase listeners desactivados - usando solo localStorage
-  console.log('Firebase listeners desactivados. Usando localStorage.');
+  const el=document.getElementById('fb-status');
+
+  // Escuchar estado de conexión
+  db.ref('.info/connected').on('value', snap => {
+    if(snap.val() === true){
+      if(el){el.textContent='🟢 Conectado';el.style.background='rgba(22,163,74,.2)';el.style.color='#4ade80';}
+    } else {
+      if(el){el.textContent='🔴 Sin conexión';el.style.background='rgba(220,38,38,.2)';el.style.color='#f87171';}
+    }
+  });
+
+  // Escuchar cambios en viajes
+  db.ref('viajes').on('value', snap => {
+    if(_fbSaving) return;
+    const data = snap.val();
+    if(data){
+      try{
+        S = typeof data === 'string' ? JSON.parse(data) : data;
+        if(!S.periods) S = initS();
+        curId = S.cur;
+        renderAll();
+      } catch(e){ console.error('Error parsing viajes', e); }
+    }
+  });
+
+  // Escuchar cambios en recorridos
+  db.ref('recorridos').on('value', snap => {
+    if(_fbSaving) return;
+    const data = snap.val();
+    if(data){
+      try{
+        recData = typeof data === 'string' ? JSON.parse(data) : data;
+        renderRecorridos();
+      } catch(e){ console.error('Error parsing recorridos', e); }
+    }
+  });
+
+  // Escuchar cambios en cronograma
+  db.ref('cronograma').on('value', snap => {
+    if(_fbSaving) return;
+    const data = snap.val();
+    if(data){
+      try{
+        cronData = typeof data === 'string' ? JSON.parse(data) : data;
+        renderCronograma();
+      } catch(e){ console.error('Error parsing cronograma', e); }
+    }
+  });
 }
 
 // ══════════════════════════════════════════════════════════
@@ -413,7 +459,8 @@ function monthName(d){return d.toLocaleString('es-AR',{month:'long',year:'numeri
 function today(){return new Date().toISOString().split('T')[0];}
 function save(){
   localStorage.setItem(SK,JSON.stringify(S));
-  // Firebase sync desactivado temporalmente
+  _fbSaving=true;
+  db.ref("viajes").set(S).then(()=>setTimeout(()=>{_fbSaving=false;},500)).catch(e=>{_fbSaving=false;});
 }
 function curP(){return S.periods.find(p=>p.id===curId);}
 
@@ -501,7 +548,8 @@ function initRecState(){const now=new Date();return{choferes:['GONZALEZ ALICIO',
 function initTemplates(){return{lunes:{choferes:{}},martes:{choferes:{}},miercoles:{choferes:{}},jueves:{choferes:{}},viernes:{choferes:{}},sabado:{choferes:{}},domingo:{choferes:{}}};}
 function saveRec(){
   localStorage.setItem(SK_R,JSON.stringify(recState));
-  // Firebase sync desactivado temporalmente
+  _fbSaving=true;
+  db.ref("recorridos").set(recState).then(()=>setTimeout(()=>{_fbSaving=false;},500)).catch(e=>{_fbSaving=false;});
 }
 
 function getDayName(dateStr){const d=new Date(dateStr+'T12:00:00');return['domingo','lunes','martes','miercoles','jueves','viernes','sabado'][d.getDay()];}
@@ -982,7 +1030,8 @@ let cronState=loadCronState();
 function loadCronState(){try{const s=JSON.parse(localStorage.getItem(SK_CRON));if(s&&s.data&&Object.keys(s.data).length>0)return s;}catch(e){}return {"data": {"chofer_2026_2": {"BARRERA FERNANDO": [null, "VAC", "T", "T", "T", "F", "T", "T", "F", "T", "T", "T", "F", "T", "T", "F", "T", "T", "T", "F", "T", "T", "T", "T", "T", "T", "T", "T", "F", "F", "T", "T"], "BOLADO JOSE": [null, "F", "T", "T", "T", "T", "T", "T", "T", "T", "F", "T", "T", "T", "F", "F", "T", "T", "F", "T", "T", "T", "T", "T", "F", "T", "T", "T", "T", "F", "T", "T"], "GONZALEZ ALICIO": [null, "T", "G", "F", "T", "T", "T", "F", "F", "G", "T", "T", "T", "F", "T", "T", "G", "T", "T", "T", "F", "T", "F", "G", "T", "T", "G", "F", "T", "T", "T", "T"], "REINA SEBASTIAN": [null, "T", "T", "T", "T", "T", "F", "T", "T", "T", "T", "F", "T", "T", "T", "T", "T", "F", "T", "T", "T", "F", "F", "T", "T", "T", "F", "T", "T", "T", "T", "F"]}, "chofer_2026_3": {"BARRERA FERNANDO": [null, "T", "T", "T", "F", "F", "T", "T", "T", "F", "T", "T", "T", "T", "T", "F", "T", "T", "T", "T", "T", "F", "T", "T", "T", "T", "F", "T", "T", "T", "F"], "BOLADO JOSE": [null, "T", "F", "T", "T", "T", "T", "F", "T", "T", "T", "F", "F", "T", "T", "T", "T", "T", "T", "F", "T", "T", "T", "F", "T", "T", "T", "T", "F", "T", "T"], "GONZALEZ ALICIO": [null, "F", "T", "G", "T", "T", "F", "T", "T", "T", "G", "T", "F", "G", "T", "T", "G", "T", "F", "F", "T", "T", "F", "T", "G", "T", "T", "F", "T", "T", "T"], "REINA SEBASTIAN": [null, "T", "T", "T", "T", "F", "T", "T", "F", "T", "T", "T", "T", "T", "F", "T", "T", "T", "T", "T", "F", "T", "T", "T", "T", "F", "F", "T", "T", "F", "T"]}, "personal_2026_2": {"ACOSTA": [null, "22", "F", "F", "14", "14", "14", "14", "14", "14", "14", "F", "F", "06", "06", "F", "06", "06", "06", "06", "06", "06", "F"], "JAIME": [null, "14", "14", "14", "F", "F", "06", "06", "06", "06", "06", "F", "22", "22", "22", "22", "F", "F", "14", "14", "14", "14", "14", "14", "14", "F", "F", "06", "06", "06", "06", "06"], "LEDESMA": [null, "22", "F", "F", "14", "14", "14", "14", "14", "14", "14", "F", "F", "06", "06", "06", "06", "06", "06", "06", "F", "F", "F", "22", "22", "22", "22", "22", "22", "22", "F", "F"], "MANGINI": [null, "14", "14", "14", "F", "F", "06", "06", "06", "06", "06", "06", "06", "F", "F", "F", "22", "22", "22", "22", "22", "22", "22", "F", "F", "14", "14", "14", "14", "14", "14", "14"], "PONCE": [null, "22", "F", "F", "14", "14", "14", "14", "14", "14", "14", "F", "F", "06", "06", "06", "06", "06", "06", "06", "F", "F", "F", "22", "22", "22", "22", "22", "22", "22", "F", "F"], "PUEBLA": [null, "22", "F", "F", "14", "14", "14", "14", "14", "14", "14", "F", "F", "06", "06", "06", "06", "06", "06", "06", "F", "F", "F", "DIU", "DIU", "DIU", "DIU", "DIU", "DIU", "DIU", "22", "22"]}, "personal_list": ["MANGINI", "PONCE", "LEDESMA", "JAIME", "ACOSTA", "PUEBLA"], "tipo": "personal", "viewMonth": 2, "viewYear": 2026}};}catch(e){}return{tipo:'chofer',viewYear:new Date().getFullYear(),viewMonth:new Date().getMonth(),data:{}};}
 function saveCronLS(){
   localStorage.setItem(SK_CRON,JSON.stringify(cronState));
-  // Firebase sync desactivado temporalmente
+  _fbSaving=true;
+  db.ref("cronograma").set(cronState).then(()=>setTimeout(()=>{_fbSaving=false;},500)).catch(e=>{_fbSaving=false;});
 }
 
 const ESTADOS_CRON=['BLANK','T','F','VAC','G','LIC'];
@@ -1443,18 +1492,37 @@ document.querySelectorAll('.modal-ov,.confirm-ov').forEach(el=>el.addEventListen
     },300);
   }
 
-  // Firebase desactivado - carga directa desde localStorage
+  // Cargar datos desde Firebase
   const msg=document.getElementById('fb-loading-msg');
-  if(msg)msg.textContent='Cargando datos locales...';
-  loaded.viajes=true;
-  loaded.recorridos=true;
-  loaded.cronograma=true;
-  checkAllLoaded();
-  const el=document.getElementById('fb-status');
-  if(el){el.textContent='💾 Local';el.style.background='rgba(107,114,128,.2)';el.style.color='#9ca3af';}
+  if(msg)msg.textContent='Conectando con Firebase...';
 
-  // Original preload below — only runs once Firebase data is loaded
-  return; // Skip the old preload, Firebase load handles it
+  db.ref('viajes').once('value').then(snap=>{
+    const data=snap.val();
+    if(data){ try{ S=data; if(!S.periods)S=initS(); curId=S.cur; localStorage.setItem(SK,JSON.stringify(S)); }catch(e){} }
+    loaded.viajes=true; checkAllLoaded();
+  }).catch(()=>{ loaded.viajes=true; checkAllLoaded(); });
+
+  db.ref('recorridos').once('value').then(snap=>{
+    const data=snap.val();
+    if(data){ try{ recState=data; localStorage.setItem(SK_R,JSON.stringify(recState)); }catch(e){} }
+    loaded.recorridos=true; checkAllLoaded();
+  }).catch(()=>{ loaded.recorridos=true; checkAllLoaded(); });
+
+  db.ref('cronograma').once('value').then(snap=>{
+    const data=snap.val();
+    if(data){ try{ cronState=data; localStorage.setItem(SK_CRON,JSON.stringify(cronState)); }catch(e){} }
+    loaded.cronograma=true; checkAllLoaded();
+  }).catch(()=>{ loaded.cronograma=true; checkAllLoaded(); });
+
+  // Timeout de seguridad: si Firebase no responde en 8 segundos, cargar local
+  setTimeout(()=>{
+    if(!loaded.viajes||!loaded.recorridos||!loaded.cronograma){
+      loaded.viajes=true; loaded.recorridos=true; loaded.cronograma=true;
+      checkAllLoaded();
+    }
+  }, 8000);
+
+  return; // Firebase maneja la carga
 })();
 
 (function preload(){
